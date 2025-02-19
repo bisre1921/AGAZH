@@ -38,3 +38,29 @@ func RegisterHouseKeeper(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Housekeeper registered successfully", "id": result.InsertedID})
 }
+
+func RegisterEmployer(c *gin.Context) {
+	var employer models.Employer
+	if err := c.ShouldBindJSON(&employer); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(employer.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while hashing the password"})
+		return
+	}
+
+	employer.Password = string(hashedPassword)
+	employer.CreatedAt = time.Now()
+	employer.UpdatedAt = time.Now()
+
+	result, err := config.DB.Collection("employers").InsertOne(context.Background(), employer)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while inserting employer"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Employer registered successfully", "id": result.InsertedID})
+}
