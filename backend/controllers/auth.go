@@ -5,9 +5,12 @@ import (
 	"backend/models"
 	"context"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
+	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -36,7 +39,7 @@ func RegisterHouseKeeper(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Housekeeper registered successfully", "id": result.InsertedID})
+	c.JSON(http.StatusCreated, gin.H{"message": "Housekeeper registered successfully", "id": result.InsertedID})
 }
 
 func RegisterEmployer(c *gin.Context) {
@@ -62,5 +65,55 @@ func RegisterEmployer(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Employer registered successfully", "id": result.InsertedID})
+	c.JSON(http.StatusCreated, gin.H{"message": "Employer registered successfully", "id": result.InsertedID})
+}
+
+func Login(c *gin.Context) {
+	var credentials struct {
+		Email    string `json:"email" binding:"required,email"`
+		Password string `json:"password" binding:"required"`
+		UserType string `json:"user_type" binding:"required"` // housekeeper or employer
+	}
+
+	if err := c.ShouldBindJSON(&credentials); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var collection string
+	if credentials.UserType == "housekeeper" {
+		collection = "housekeepers"
+	} else {
+		collection = "employers"
+	}
+
+	var user bson.M
+	err := config.DB.Collection(collection).FindOne(context.Background(), bson.M{"email": credentials.Email}).Decode(&user)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		return
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user["password"].(string)), []byte(credentials.Password)); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		return
+	}
+
+	// generate JWT token
+	claims := jwt.MapClaims{
+		"user_id":   user["_id"],
+		"user_type": credentials.UserType,
+		"exp":       time.Now().Add(time.Hour * 24).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	JWT_SECRET := os.Getenv("JWT_SECRET")
+	tokenString, err := token.SignedString([]byte(JWT_SECRET))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while generating token"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"token": tokenString})
 }
