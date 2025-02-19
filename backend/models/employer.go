@@ -1,0 +1,19 @@
+package models
+
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+type Employer struct {
+	ID          primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	Name        string             `json:"name,omitempty" bson:"name,omitempty" binding:"required"`
+	Email       string             `json:"email,omitempty" bson:"email,omitempty" binding:"required,email"`
+	Password    string             `json:"-" bson:"password,omitempty" binding:"required"`
+	Address     string             `json:"address,omitempty" bson:"address,omitempty" binding:"required"`
+	PhoneNumber string             `json:"phone_number,omitempty" bson:"phone_number,omitempty" binding:"required"`
+	FamilySize  int                `json:"family_size,omitempty" bson:"family_size,omitempty"`
+	CreatedAt   time.Time          `json:"created_at,omitempty" bson:"created_at,omitempty"`
+	UpdatedAt   time.Time          `json:"updated_at,omitempty" bson:"updated_at,omitempty"`
+}
