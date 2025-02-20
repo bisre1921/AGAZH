@@ -91,3 +91,24 @@ func UpdateHousekeeper(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Housekeeper updated successfully"})
 }
+
+func DeleteHousekeeper(c *gin.Context) {
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid housekeeper ID"})
+		return
+	}
+
+	result, err := config.DB.Collection("housekeepers").DeleteOne(context.Background(), bson.M{"_id": id})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while deleting housekeeper"})
+		return
+	}
+
+	if result.DeletedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Housekeeper not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Housekeeper deleted successfully"})
+}
