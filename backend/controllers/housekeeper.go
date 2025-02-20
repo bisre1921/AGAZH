@@ -71,7 +71,7 @@ func UpdateHousekeeper(c *gin.Context) {
 
 	var updates models.Housekeeper
 	if err := c.ShouldBindJSON(&updates); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	result, err := config.DB.Collection("housekeepers").UpdateOne(
