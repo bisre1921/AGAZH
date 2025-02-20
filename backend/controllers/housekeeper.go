@@ -61,3 +61,33 @@ func GetHousekeeper(c *gin.Context) {
 
 	c.JSON(http.StatusOK, housekeeper)
 }
+
+func UpdateHousekeeper(c *gin.Context) {
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid housekeeper ID"})
+		return
+	}
+
+	var updates models.Housekeeper
+	if err := c.ShouldBindJSON(&updates); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+	}
+
+	result, err := config.DB.Collection("housekeepers").UpdateOne(
+		context.Background(),
+		bson.M{"_id": id},
+		bson.M{"$set": updates},
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while updating housekeeper"})
+		return
+	}
+
+	if result.MatchedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Housekeeper not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Housekeeper updated successfully"})
+}
