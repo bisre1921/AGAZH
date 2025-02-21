@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateReview(c *gin.Context) {
@@ -43,8 +44,8 @@ func CreateReview(c *gin.Context) {
 	pipeline := []bson.M{
 		{"$match": bson.M{"housekeeper_id": review.HousekeeperID}},
 		{"$group": bson.M{
-			"_id":            nil,
-			"average_rating": bson.M{"$avg": "$rating"},
+			"_id":           nil,
+			"averageRating": bson.M{"$avg": "$rating"},
 		}},
 	}
 
@@ -79,4 +80,30 @@ func CreateReview(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"id": result.InsertedID})
+}
+
+func GetHousekeeperReviews(c *gin.Context) {
+	housekeeperID, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid housekeeper ID"})
+		return
+	}
+
+	cursor, err := config.DB.Collection("reviews").Find(
+		context.Background(),
+		bson.M{"housekeeper_id": housekeeperID},
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch reviews"})
+		return
+	}
+	defer cursor.Close(context.Background())
+
+	var reviews []models.Review
+	if err = cursor.All(context.Background(), &reviews); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode reviews"})
+		return
+	}
+
+	c.JSON(http.StatusOK, reviews)
 }
