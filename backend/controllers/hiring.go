@@ -12,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateHiring(c *gin.Context) {
@@ -42,7 +43,7 @@ func CreateHiring(c *gin.Context) {
 
 	result, err := config.DB.Collection("hirings").InsertOne(context.Background(), hiring)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create hiring request"})
 		return
 	}
 
@@ -90,4 +91,21 @@ func sendHiringEmail(employer models.Employer, housekeeper models.Housekeeper, h
 		fmt.Println("Error sending email: ", err)
 	}
 
+}
+
+func GetHiringStatus(c *gin.Context) {
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	var hiring models.Hiring
+	err = config.DB.Collection("hirings").FindOne(context.Background(), bson.M{"_id": id}).Decode(&hiring)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Hiring not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, hiring)
 }
