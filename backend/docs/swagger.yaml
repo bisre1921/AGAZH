@@ -1,0 +1,560 @@
+basePath: /api/v1
+definitions:
+  models.Category:
+    enum:
+    - NORMAL
+    - CHILD_CARE
+    - CLEANER
+    type: string
+    x-enum-varnames:
+    - Normal
+    - ChildCare
+    - Cleaner
+  models.Employer:
+    properties:
+      address:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      family_size:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      phone_number:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - address
+    - email
+    - name
+    - phone_number
+    type: object
+  models.EmploymentType:
+    enum:
+    - FULL_TIME
+    - PART_TIME
+    type: string
+    x-enum-varnames:
+    - FullTime
+    - PartTime
+  models.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  models.GenericResponse:
+    properties:
+      id: {}
+      message:
+        type: string
+    type: object
+  models.Hiring:
+    properties:
+      created_at:
+        type: string
+      delivery_type:
+        type: string
+      employer_id:
+        type: string
+      housekeeper_id:
+        type: string
+      id:
+        type: string
+      requirements:
+        type: string
+      salary_offer:
+        type: number
+      start_date:
+        type: string
+      status:
+        $ref: '#/definitions/models.HiringStatus'
+      update_at:
+        type: string
+    type: object
+  models.HiringResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.HiringStatus:
+    enum:
+    - PENDING
+    - APPROVED
+    - REJECTED
+    - COMPLETED
+    type: string
+    x-enum-varnames:
+    - Pending
+    - Approved
+    - Rejected
+    - Completed
+  models.Housekeeper:
+    properties:
+      age:
+        type: integer
+      category:
+        $ref: '#/definitions/models.Category'
+      certifications:
+        items:
+          type: string
+        type: array
+      created_at:
+        type: string
+      email:
+        type: string
+      employment_type:
+        $ref: '#/definitions/models.EmploymentType'
+      experience:
+        type: integer
+      id:
+        type: string
+      is_available:
+        type: boolean
+      location:
+        type: string
+      name:
+        type: string
+      phone_number:
+        type: string
+      photo_url:
+        type: string
+      rating:
+        type: number
+      reviews:
+        items:
+          $ref: '#/definitions/models.Review'
+        type: array
+      skills:
+        items:
+          type: string
+        type: array
+      updated_at:
+        type: string
+    required:
+    - age
+    - category
+    - email
+    - employment_type
+    - location
+    - name
+    - phone_number
+    type: object
+  models.LoginCredentials:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      user_type:
+        description: housekeeper or employer
+        type: string
+    required:
+    - email
+    - password
+    - user_type
+    type: object
+  models.Review:
+    properties:
+      comment:
+        type: string
+      created_at:
+        type: string
+      employer_id:
+        type: string
+      housekeeper_id:
+        type: string
+      id:
+        type: string
+      rating:
+        maximum: 5
+        minimum: 1
+        type: number
+    required:
+    - rating
+    type: object
+  models.ReviewResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  models.ReviewsResponse:
+    properties:
+      reviews:
+        items:
+          $ref: '#/definitions/models.Review'
+        type: array
+    type: object
+  models.TokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is the API for the AGAZH project.
+  title: AGAZH API
+  version: "1.0"
+paths:
+  /create-hiring:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint creates a new hiring request for housekeepers and
+        employers
+      parameters:
+      - description: Hiring request data
+        in: body
+        name: hiring
+        required: true
+        schema:
+          $ref: '#/definitions/models.Hiring'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Creates a new hiring request
+      tags:
+      - hiring
+  /create-review:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint creates a new review for a specific housekeeper
+      parameters:
+      - description: Review data
+        in: body
+        name: review
+        required: true
+        schema:
+          $ref: '#/definitions/models.Review'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ReviewResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Creates a new review for a housekeeper
+      tags:
+      - review
+  /hiring/{id}:
+    get:
+      consumes:
+      - application/json
+      description: This endpoint retrieves the status of a specific hiring request
+        by its ID
+      parameters:
+      - description: Hiring request ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.HiringResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Fetches the status of a hiring request
+      tags:
+      - hiring
+  /housekeeper/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: This endpoint deletes a specific housekeeper's record
+      parameters:
+      - description: Housekeeper ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Deletes a housekeeper's record
+      tags:
+      - housekeeper
+    get:
+      consumes:
+      - application/json
+      description: This endpoint retrieves a housekeeper's details by their ID
+      parameters:
+      - description: Housekeeper ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Housekeeper'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Retrieves details of a specific housekeeper
+      tags:
+      - housekeeper
+    put:
+      consumes:
+      - application/json
+      description: This endpoint allows updating the details of a specific housekeeper
+      parameters:
+      - description: Housekeeper ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated housekeeper data
+        in: body
+        name: updates
+        required: true
+        schema:
+          $ref: '#/definitions/models.Housekeeper'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Updates a housekeeper's details
+      tags:
+      - housekeeper
+  /housekeeper/{id}/reviews:
+    get:
+      consumes:
+      - application/json
+      description: This endpoint retrieves all reviews associated with a specific
+        housekeeper based on their ID
+      parameters:
+      - description: Housekeeper ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ReviewsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Fetches all reviews for a specific housekeeper
+      tags:
+      - review
+  /housekeepers:
+    get:
+      consumes:
+      - application/json
+      description: This endpoint fetches housekeepers based on category, employment
+        type, and location filters
+      parameters:
+      - description: Category
+        in: query
+        name: category
+        type: string
+      - description: Employment Type
+        in: query
+        name: employment_type
+        type: string
+      - description: Location
+        in: query
+        name: location
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Housekeeper'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Retrieves a list of housekeepers based on filter criteria
+      tags:
+      - housekeeper
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint logs in either a housekeeper or employer and generates
+        a JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginCredentials'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Logs in a user and generates a JWT token
+      tags:
+      - auth
+  /register-employer:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint registers a new employer
+      parameters:
+      - description: Employer data
+        in: body
+        name: employer
+        required: true
+        schema:
+          $ref: '#/definitions/models.Employer'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Registers a new employer
+      tags:
+      - auth
+  /register-housekeeper:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint registers a new housekeeper
+      parameters:
+      - description: Housekeeper data
+        in: body
+        name: housekeeper
+        required: true
+        schema:
+          $ref: '#/definitions/models.Housekeeper'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Registers a new housekeeper
+      tags:
+      - auth
+swagger: "2.0"

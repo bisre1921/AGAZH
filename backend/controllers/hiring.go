@@ -15,6 +15,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// CreateHiring godoc
+// @Summary Creates a new hiring request
+// @Description This endpoint creates a new hiring request for housekeepers and employers
+// @Tags hiring
+// @Accept json
+// @Produce json
+// @Param hiring body models.Hiring true "Hiring request data"
+// @Success 201 {object} models.GenericResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
+// @Router /create-hiring [post]
 func CreateHiring(c *gin.Context) {
 	var hiring models.Hiring
 	if err := c.ShouldBindJSON(&hiring); err != nil {
@@ -93,6 +104,17 @@ func sendHiringEmail(employer models.Employer, housekeeper models.Housekeeper, h
 
 }
 
+// GetHiringStatus godoc
+// @Summary Fetches the status of a hiring request
+// @Description This endpoint retrieves the status of a specific hiring request by its ID
+// @Tags hiring
+// @Accept json
+// @Produce json
+// @Param id path string true "Hiring request ID"
+// @Success 200 {object} models.HiringResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Router /hiring/{id} [get]
 func GetHiringStatus(c *gin.Context) {
 	id, err := primitive.ObjectIDFromHex(c.Param("id"))
 	if err != nil {

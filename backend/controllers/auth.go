@@ -14,6 +14,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// RegisterHouseKeeper godoc
+// @Summary Registers a new housekeeper
+// @Description This endpoint registers a new housekeeper
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param housekeeper body models.Housekeeper true "Housekeeper data"
+// @Success 201 {object} models.GenericResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
+// @Router /register-housekeeper [post]
 func RegisterHouseKeeper(c *gin.Context) {
 	var housekeeper models.Housekeeper
 	if err := c.ShouldBindJSON(&housekeeper); err != nil {
@@ -42,6 +53,17 @@ func RegisterHouseKeeper(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Housekeeper registered successfully", "id": result.InsertedID})
 }
 
+// RegisterEmployer godoc
+// @Summary Registers a new employer
+// @Description This endpoint registers a new employer
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param employer body models.Employer true "Employer data"
+// @Success 201 {object} models.GenericResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
+// @Router /register-employer [post]
 func RegisterEmployer(c *gin.Context) {
 	var employer models.Employer
 	if err := c.ShouldBindJSON(&employer); err != nil {
@@ -68,6 +90,18 @@ func RegisterEmployer(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Employer registered successfully", "id": result.InsertedID})
 }
 
+// Login godoc
+// @Summary Logs in a user and generates a JWT token
+// @Description This endpoint logs in either a housekeeper or employer and generates a JWT token
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param credentials body models.LoginCredentials true "Login credentials"
+// @Success 201 {object} models.TokenResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 401 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
+// @Router /login [post]
 func Login(c *gin.Context) {
 	var credentials struct {
 		Email    string `json:"email" binding:"required,email"`

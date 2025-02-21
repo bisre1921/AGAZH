@@ -12,6 +12,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// CreateReview godoc
+// @Summary Creates a new review for a housekeeper
+// @Description This endpoint creates a new review for a specific housekeeper
+// @Tags review
+// @Accept json
+// @Produce json
+// @Param review body models.Review true "Review data"
+// @Success 201 {object} models.ReviewResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
+// @Router /create-review [post]
 func CreateReview(c *gin.Context) {
 	var review models.Review
 	if err := c.ShouldBindJSON(&review); err != nil {
@@ -82,6 +93,17 @@ func CreateReview(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"id": result.InsertedID})
 }
 
+// GetHousekeeperReviews godoc
+// @Summary Fetches all reviews for a specific housekeeper
+// @Description This endpoint retrieves all reviews associated with a specific housekeeper based on their ID
+// @Tags review
+// @Accept json
+// @Produce json
+// @Param id path string true "Housekeeper ID"
+// @Success 200 {object} models.ReviewsResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
+// @Router /housekeeper/{id}/reviews [get]
 func GetHousekeeperReviews(c *gin.Context) {
 	housekeeperID, err := primitive.ObjectIDFromHex(c.Param("id"))
 	if err != nil {
