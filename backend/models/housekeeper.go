@@ -22,7 +22,7 @@ type Housekeeper struct {
 	ID             primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
 	Name           string             `json:"name,omitempty" bson:"name,omitempty" binding:"required"`
 	Email          string             `json:"email,omitempty" bson:"email,omitempty" binding:"required,email"`
-	Password       string             `json:"-" bson:"password,omitempty" binding:"required"`
+	Password       string             `json:"password" bson:"password,omitempty" binding:"required"`
 	Age            int                `json:"age,omitempty" bson:"age,omitempty" binding:"required"`
 	Experience     int                `json:"experience,omitempty" bson:"experience,omitempty"`
 	Category       Category           `json:"category,omitempty" bson:"category,omitempty" binding:"required"`

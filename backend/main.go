@@ -40,7 +40,9 @@ func main() {
 		routes.SetupRatingRoutes(v1)
 	}
 
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.Static("/docs", "./docs") // Serve the docs directory
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.URL("/docs/swagger.json")))
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal("Server Run Failed:", err)

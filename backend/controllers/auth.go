@@ -46,7 +46,7 @@ func RegisterHouseKeeper(c *gin.Context) {
 
 	result, err := config.DB.Collection("housekeepers").InsertOne(context.Background(), housekeeper)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while inserting housekeeper"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
