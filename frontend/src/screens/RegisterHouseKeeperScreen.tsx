@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, ScrollView, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Alert, ScrollView, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { Button, Text, TextInput } from 'react-native-paper';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import * as ImagePicker from 'expo-image-picker';
@@ -29,7 +30,7 @@ interface FormValues {
   photo: string | null;
 }
 
-const RegisterHouseKeeperScreen = () => {
+const RegisterHouseKeeperScreen = ({ navigation }) => {
   const [certifications, setCertifications] = useState<string[]>([]);
   const [currentCertification, setCurrentCertification] = useState('');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
@@ -41,7 +42,7 @@ const RegisterHouseKeeperScreen = () => {
     }
   };
 
-  const pickImage = async () => {
+  const pickImage = async (setFieldValue: any) => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -50,6 +51,7 @@ const RegisterHouseKeeperScreen = () => {
     });
     if (!result.canceled && result.assets.length > 0) {
       setPhotoUri(result.assets[0].uri);
+      setFieldValue('photo', result.assets[0].uri); // Update Formik field value
     }
   };
 
@@ -82,6 +84,9 @@ const RegisterHouseKeeperScreen = () => {
 
   return (
     <ScrollView style={{ padding: 20 }}>
+      <Text style={styles.title}>Create HouseKeeper Account</Text>
+      <Text style={styles.subtitle}>Find the perfect Employer</Text>
+
       <Formik
         initialValues={{
           name: '',
@@ -96,44 +101,103 @@ const RegisterHouseKeeperScreen = () => {
         validationSchema={validationSchema}
         onSubmit={handleRegister}
       >
-        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+        {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
           <View>
-            <TextInput placeholder="Name" onChangeText={handleChange('name')} onBlur={handleBlur('name')} value={values.name} />
-            {touched.name && errors.name && <Text>{errors.name}</Text>}
+            <TextInput
+              label="Full Name"
+              value={values.name}
+              onChangeText={handleChange('name')}
+              onBlur={handleBlur('name')}
+              style={styles.input}
+              error={touched.name && !!errors.name}
+            />
+            {touched.name && errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
 
-            <TextInput placeholder="Email" onChangeText={handleChange('email')} onBlur={handleBlur('email')} value={values.email} />
-            {touched.email && errors.email && <Text>{errors.email}</Text>}
+            <TextInput
+              label="Email"
+              value={values.email}
+              onChangeText={handleChange('email')}
+              onBlur={handleBlur('email')}
+              style={styles.input}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              error={touched.email && !!errors.email}
+            />
+            {touched.email && errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
-            <TextInput placeholder="Password" secureTextEntry onChangeText={handleChange('password')} onBlur={handleBlur('password')} value={values.password} />
-            {touched.password && errors.password && <Text>{errors.password}</Text>}
+            <TextInput
+              label="Password"
+              value={values.password}
+              onChangeText={handleChange('password')}
+              onBlur={handleBlur('password')}
+              style={styles.input}
+              secureTextEntry
+              error={touched.password && !!errors.password}
+            />
+            {touched.password && errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 
-            <TextInput placeholder="Confirm Password" secureTextEntry onChangeText={handleChange('confirmPassword')} onBlur={handleBlur('confirmPassword')} value={values.confirmPassword} />
-            {touched.confirmPassword && errors.confirmPassword && <Text>{errors.confirmPassword}</Text>}
+            <TextInput
+              label="Confirm Password"
+              value={values.confirmPassword}
+              onChangeText={handleChange('confirmPassword')}
+              onBlur={handleBlur('confirmPassword')}
+              style={styles.input}
+              secureTextEntry
+              error={touched.confirmPassword && !!errors.confirmPassword}
+            />
+            {touched.confirmPassword && errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
 
-            <TextInput placeholder="Phone Number" onChangeText={handleChange('phoneNumber')} onBlur={handleBlur('phoneNumber')} value={values.phoneNumber} />
-            {touched.phoneNumber && errors.phoneNumber && <Text>{errors.phoneNumber}</Text>}
+            <TextInput
+              label="Phone Number"
+              value={values.phoneNumber}
+              onChangeText={handleChange('phoneNumber')}
+              onBlur={handleBlur('phoneNumber')}
+              style={styles.input}
+              keyboardType="phone-pad"
+              error={touched.phoneNumber && !!errors.phoneNumber}
+            />
+            {touched.phoneNumber && errors.phoneNumber && <Text style={styles.errorText}>{errors.phoneNumber}</Text>}
 
-            <TextInput placeholder="Experience" onChangeText={handleChange('experience')} onBlur={handleBlur('experience')} value={values.experience} />
-            {touched.experience && errors.experience && <Text>{errors.experience}</Text>}
+            <TextInput
+              label="Experience"
+              value={values.experience}
+              onChangeText={handleChange('experience')}
+              onBlur={handleBlur('experience')}
+              style={styles.input}
+              error={touched.experience && !!errors.experience}
+            />
+            {touched.experience && errors.experience && <Text style={styles.errorText}>{errors.experience}</Text>}
 
-            <TextInput placeholder="Add Certification" value={currentCertification} onChangeText={setCurrentCertification} />
-            <Button title="Add Certification" onPress={addCertification} />
+            <TextInput
+              label="Add Certification"
+              value={currentCertification}
+              onChangeText={setCurrentCertification}
+            />
+            <Button onPress={addCertification}>Add Certification</Button>
             {certifications.map((cert, index) => (
               <Text key={index}>{cert}</Text>
             ))}
 
-            <TouchableOpacity onPress={pickImage}>
+            <TouchableOpacity onPress={() => pickImage(setFieldValue)}>
               <Text>Pick an Image</Text>
             </TouchableOpacity>
             {photoUri && <Image source={{ uri: photoUri }} style={{ width: 100, height: 100 }} />}
 
-            <Button title="Register" onPress={() => handleSubmit()} />
+            <Button onPress={() => handleSubmit()}>Register</Button>
           </View>
         )}
       </Formik>
+
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Already have an account?</Text>
+        <Button mode="text" onPress={() => navigation.navigate('Login')} style={styles.footerButton}>
+          Login
+        </Button>
+      </View>
     </ScrollView>
   );
 };
+
 
 const styles = StyleSheet.create({
     container: {

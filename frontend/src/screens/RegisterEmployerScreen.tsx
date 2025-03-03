@@ -163,7 +163,7 @@ export const RegisterEmployerScreen = ({ navigation }) => {
 
               <Button
                 mode="contained"
-                onPress={handleSubmit}
+                onPress={() => handleSubmit()}
                 style={styles.button}
                 loading={isLoading}
                 disabled={isLoading}
