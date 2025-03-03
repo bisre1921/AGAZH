@@ -23,7 +23,7 @@ interface Housekeeper {
     is_available: boolean;    
 }
 
-const BrowseHousekeepersScreen = ({ navigation }) => {
+const BrowseHousekeepersScreen = ({ navigation }: {navigation: any}) => {
   const [housekeepers, setHousekeepers] = useState<Housekeeper[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
