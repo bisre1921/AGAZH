@@ -89,3 +89,12 @@ export const createReview = (data: any) => {
 export const getHousekeeperReviews = (id: string) => {
     return api.get(`/reviews/housekeeper/${id}`);
 };
+
+// Hiring API
+export const createHiring = (data: any) => {
+    return api.post('/hiring', data);
+};
+  
+export const getHiringStatus = (id: string) => {
+    return api.get(`/hiring/${id}`);
+};
