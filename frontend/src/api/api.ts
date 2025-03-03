@@ -80,3 +80,12 @@ export const updateHousekeeper = (id: string, data: Partial<HousekeeperData>) =>
 export const deleteHousekeeper = (id: string) => {
     return api.delete(`/housekeepers/${id}`);
 }
+
+// Review API
+export const createReview = (data: any) => {
+    return api.post('/reviews', data);
+};
+  
+export const getHousekeeperReviews = (id: string) => {
+    return api.get(`/reviews/housekeeper/${id}`);
+};
