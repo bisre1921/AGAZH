@@ -51,7 +51,7 @@ interface EmployerData {
 }
   
   
-
+// Auth api
 export const registerHousekeeper = (data: HousekeeperData) => {
     return api.post("/auth/register/housekeeper", data);
 }
@@ -64,3 +64,19 @@ export const login = (email: string, password: string, userType: string) => {
     return api.post("/auth/login", { email, password, userType });
 }
 
+// housekeeper api
+export const getHousekeeper = (id: string) => {
+    return api.get(`/housekeepers/${id}`);
+}
+
+export const getHousekeepers = (filters = {}) => {
+    return api.get("/housekeepers", { params: filters });
+}
+
+export const updateHousekeeper = (id: string, data: Partial<HousekeeperData>) => {
+    return api.put(`/housekeepers/${id}`, data);
+}
+
+export const deleteHousekeeper = (id: string) => {
+    return api.delete(`/housekeepers/${id}`);
+}
