@@ -23,7 +23,7 @@ const RegisterEmployerSchema = Yup.object().shape({
     .required('Family size is required'),
 });
 
-export const RegisterEmployerScreen = ({ navigation }) => {
+const RegisterEmployerScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async (values: any) => {
@@ -241,3 +241,5 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
 });
+
+export default RegisterEmployerScreen;
