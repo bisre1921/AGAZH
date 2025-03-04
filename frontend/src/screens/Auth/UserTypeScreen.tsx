@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-const UserTypeScreen = ({navigation}) => {
+const UserTypeScreen = ({navigation}: {navigation: any}) => {
   return (
     <SafeAreaView style={styles.container}>
         <View style={styles.logoContainer}>

@@ -178,7 +178,7 @@ const EmployerProfileScreen = () => {
                     <View style={styles.infoTextContainer}>
                       <Text style={styles.infoLabel}>Member Since</Text>
                       <Text style={styles.infoValue}>
-                        {new Date(profile?.created_at).toLocaleDateString()}
+                        {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'}
                       </Text>
                     </View>
                 </View>

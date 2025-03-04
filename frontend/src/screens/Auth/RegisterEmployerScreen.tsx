@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { registerEmployer } from '../api/api';
+import { registerEmployer } from '../../api/api';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -23,7 +23,7 @@ const RegisterEmployerSchema = Yup.object().shape({
     .required('Family size is required'),
 });
 
-const RegisterEmployerScreen = ({ navigation }) => {
+const RegisterEmployerScreen = ({ navigation }: {navigation: any}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async (values: any) => {

@@ -30,7 +30,7 @@ interface FormValues {
   photo: string | null;
 }
 
-const RegisterHouseKeeperScreen = ({ navigation }) => {
+const RegisterHouseKeeperScreen = ({ navigation }: {navigation: any}) => {
   const [certifications, setCertifications] = useState<string[]>([]);
   const [currentCertification, setCurrentCertification] = useState('');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
