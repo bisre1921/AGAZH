@@ -53,16 +53,16 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         bootstrapAsync();
     }, []);
 
-    const login = async (email: string, password: string, userType: string) => {
+    const login = async (email: string, password: string, user_type: string) => {
         try {
             setIsLoading(true);
-            const response = await apiLogin(email, password, userType);
+            const response = await apiLogin(email, password, user_type);
             const {token} = response.data;
 
             const decoded = jwtDecode(token);
 
             await AsyncStorage.setItem('token', token);
-            await AsyncStorage.setItem('userType', userType);
+            await AsyncStorage.setItem('userType', user_type);
             await AsyncStorage.setItem('userInfo', JSON.stringify(decoded));
 
             setUserToken(token);

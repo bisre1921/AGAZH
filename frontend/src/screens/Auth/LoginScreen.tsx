@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../contexts/AuthContext"
+import { useAuth } from "@/src/contexts/AuthContext"; 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { Button, RadioButton, Text, TextInput } from "react-native-paper";
@@ -11,112 +11,117 @@ const LoginSchema = Yup.object().shape({
     password: Yup.string().required('Password is required'),
 });
 
-
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({navigation}: {navigation: any}) => {
     const {login} = useAuth();
-    const [userType, setUserType] = useState("employer")
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleLogin = async (values: any) => {
+        if (values.user_type !== "housekeeper" && values.user_type !== "employer") {
+            Alert.alert("Invalid User Type", "Please select a valid user type.");
+            return;
+        }
+      
         try {
-            setIsLoading(true)
-            await login(values.email, values.password, userType)
+            setIsLoading(true);
+            console.log(values);
+            await login(values.email, values.password, values.user_type);
         } catch (error: any) {
-            console.error("login error", error)
+            console.error("login error", error);
             Alert.alert(
                 'Login Failed',
                 error?.response?.data?.error || error?.message || 'Invalid credentials. Please try again.'
             );
-              
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
-  return (
-    <SafeAreaView style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-            <Text style={styles.title}>Welcome Back</Text>
-            <Text style={styles.subtitle}>Sign in to continue</Text>
+    return (
+        <SafeAreaView style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+                <Text style={styles.title}>Welcome Back</Text>
+                <Text style={styles.subtitle}>Sign in to continue</Text>
 
-            <Formik
-                initialValues={{ email: '', password: '' }}
-                validationSchema={LoginSchema}
-                onSubmit={handleLogin}
-            >
-                {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-                    <View style={styles.form}>
-                        <TextInput
-                            label="Email"
-                            value={values.email}
-                            onChangeText={handleChange('email')}
-                            onBlur={handleBlur('email')}
-                            style={styles.input}
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            error={touched.email && !!errors.email}
-                        />
-                        {touched.email && errors.email && (
-                            <Text style={styles.errorText}>{errors.email}</Text>
-                        )}
-
-                        <TextInput
-                            label="Password"
-                            value={values.password}
-                            onChangeText={handleChange('password')}
-                            onBlur={handleBlur('password')}
-                            style={styles.input}
-                            secureTextEntry
-                            error={touched.password && !!errors.password}
-                        />
-                        {touched.password && errors.password && (
-                            <Text style={styles.errorText}>{errors.password}</Text>
-                        )}
-
-                        <View style={styles.radioContainer}>
-                            <Text style={styles.radioLabel}>I am a:</Text>
-                            <RadioButton.Group
-                            onValueChange={(value) => setUserType(value)}
-                            value={userType}
-                            >
-                            <View style={styles.radioButton}>
-                                <RadioButton value="employer" />
-                                <Text>Employer</Text>
-                            </View>
-                            <View style={styles.radioButton}>
-                                <RadioButton value="housekeeper" />
-                                <Text>Housekeeper</Text>
-                            </View>
-                            </RadioButton.Group>
-                        </View>
-
-                        <Button
-                            mode="contained"
-                            onPress={() => handleSubmit()}
-                            style={styles.button}
-                            loading={isLoading}
-                            disabled={isLoading}
-                        >
-                            Login
-                        </Button>
-                    </View>
-                )}
-            </Formik>
-
-            <View style={styles.footer}>
-                <Text style={styles.footerText}>Don't have an account?</Text>
-                <Button
-                    mode="text"
-                    onPress={() => navigation.navigate('UserType')}
-                    style={styles.footerButton}
+                <Formik
+                    initialValues={{ email: '', password: '', user_type: "employer" }}
+                    validationSchema={LoginSchema}
+                    onSubmit={handleLogin}
                 >
-                    Sign Up
-                </Button>
-            </View>
-        </ScrollView>
-    </SafeAreaView>
-  )
-}
+                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
+                        <View style={styles.form}>
+                            <TextInput
+                                label="Email"
+                                value={values.email}
+                                onChangeText={handleChange('email')}
+                                onBlur={handleBlur('email')}
+                                style={styles.input}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                error={touched.email && !!errors.email}
+                            />
+                            {touched.email && errors.email && (
+                                <Text style={styles.errorText}>{errors.email}</Text>
+                            )}
+
+                            <TextInput
+                                label="Password"
+                                value={values.password}
+                                onChangeText={handleChange('password')}
+                                onBlur={handleBlur('password')}
+                                style={styles.input}
+                                secureTextEntry
+                                error={touched.password && !!errors.password}
+                            />
+                            {touched.password && errors.password && (
+                                <Text style={styles.errorText}>{errors.password}</Text>
+                            )}
+
+                            <View style={styles.radioContainer}>
+                                <Text style={styles.radioLabel}>I am a:</Text>
+                                <RadioButton.Group
+                                    onValueChange={(value) => setFieldValue('user_type', value)}
+                                    value={values.user_type}
+                                >
+                                    <View style={styles.radioButton}>
+                                        <RadioButton value="employer" />
+                                        <Text>Employer</Text>
+                                    </View>
+                                    <View style={styles.radioButton}>
+                                        <RadioButton value="housekeeper" />
+                                        <Text>Housekeeper</Text>
+                                    </View>
+                                </RadioButton.Group>
+                            </View>
+
+                            <Button
+                                mode="contained"
+                                onPress={() => handleSubmit()}
+                                style={styles.button}
+                                loading={isLoading}
+                                disabled={isLoading}
+                            >
+                                Login
+                            </Button>
+                        </View>
+                    )}
+                </Formik>
+
+                <View style={styles.footer}>
+                    <Text style={styles.footerText}>Don't have an account?</Text>
+                    <Button
+                        mode="text"
+                        onPress={() => navigation.navigate('UserType')}
+                        style={styles.footerButton}
+                    >
+                        Sign Up
+                    </Button>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
+    );
+};
+
+
 
 const styles = StyleSheet.create({
     container: {

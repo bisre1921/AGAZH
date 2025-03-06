@@ -4,6 +4,7 @@ import (
 	"backend/config"
 	"backend/models"
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -120,6 +121,8 @@ func Login(c *gin.Context) {
 	} else {
 		collection = "employers"
 	}
+
+	fmt.Println("Received Credentials:", credentials)
 
 	var user bson.M
 	err := config.DB.Collection(collection).FindOne(context.Background(), bson.M{"email": credentials.Email}).Decode(&user)

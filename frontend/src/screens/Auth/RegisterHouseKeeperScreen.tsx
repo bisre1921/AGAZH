@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
+import { registerHousekeeper } from '@/src/api/api';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
@@ -14,33 +15,45 @@ const validationSchema = Yup.object().shape({
     .oneOf([Yup.ref('password')], 'Passwords must match')
     .required('Confirm Password is required'),
   phoneNumber: Yup.string().required('Phone number is required'),
-  experience: Yup.string().required('Experience is required'),
+  experience: Yup.number().required('Experience is required'),
   certifications: Yup.array().of(Yup.string()).default([]),
-  photo: Yup.mixed().nullable(),
+  photo_url: Yup.mixed().nullable(),
+  age: Yup.number().required('Age is required').min(18, 'Age must be at least 18'),
+  category: Yup.string().required('Category is required'),
+  employmentType: Yup.string().required('Employment Type is required'),
+  location: Yup.string().required('Location is required'),
 });
 
-interface FormValues {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  phoneNumber: string;
-  experience: string;
-  certifications: string[];
-  photo: string | null;
-}
 
-const RegisterHouseKeeperScreen = ({ navigation }: {navigation: any}) => {
+// interface FormValues {
+//   name: string;
+//   email: string;
+//   password: string;
+//   confirmPassword: string;
+//   phoneNumber: string;
+//   experience: number;
+//   certifications: string[];
+//   photo_url: string | null;
+//   age: number;  
+//   category: string;  
+//   employmentType: string;  
+//   location: string;
+// }
+
+const RegisterHouseKeeperScreen = ({ navigation }: { navigation: any }) => {
   const [certifications, setCertifications] = useState<string[]>([]);
   const [currentCertification, setCurrentCertification] = useState('');
-  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const addCertification = () => {
+  const addCertification = (setFieldValue: any) => {
     if (currentCertification.trim() && !certifications.includes(currentCertification.trim())) {
-      setCertifications([...certifications, currentCertification.trim()]);
+      const updatedCertifications = [...certifications, currentCertification.trim()];
+      setCertifications(updatedCertifications);
+      setFieldValue('certifications', updatedCertifications); // Update Formik state
       setCurrentCertification('');
     }
   };
+  
 
   const pickImage = async (setFieldValue: any) => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -50,35 +63,31 @@ const RegisterHouseKeeperScreen = ({ navigation }: {navigation: any}) => {
       quality: 1,
     });
     if (!result.canceled && result.assets.length > 0) {
-      setPhotoUri(result.assets[0].uri);
-      setFieldValue('photo', result.assets[0].uri); // Update Formik field value
+      setFieldValue('photo_url', result.assets[0].uri); // Update Formik state directly
     }
   };
 
-  const handleRegister = async (values: FormValues) => {
+  const handleRegister = async (values: any) => {
     try {
-      const formData = new FormData();
-      formData.append('name', values.name);
-      formData.append('email', values.email);
-      formData.append('password', values.password);
-      formData.append('phoneNumber', values.phoneNumber);
-      formData.append('experience', values.experience);
-      values.certifications.forEach((cert, index) => {
-        formData.append(`certifications[${index}]`, cert);
-      });
-      if (values.photo) {
-        formData.append('photo', {
-          uri: values.photo,
-          name: 'photo.jpg',
-          type: 'image/jpeg',
-        } as any);
-      }
-      const response = await axios.post('YOUR_API_ENDPOINT', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      Alert.alert('Registration Successful', response.data.message);
+      setIsLoading(true);
+      const { confirmPassword, phoneNumber, employmentType, ...userData } = values;
+      userData.phone_number = phoneNumber
+      userData.employment_type = employmentType
+      userData.age = parseInt(userData.age, 10);
+      userData.experience = parseInt(userData.experience, 10);
+
+      console.log(userData);
+
+      await registerHousekeeper(userData);
+      Alert.alert(
+        'Housekeeper registered successfully',
+        'you can now login with your email and password',
+        [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
+      );
     } catch (error: any) {
       Alert.alert('Registration Failed', error.response?.data?.error || error.message || 'Try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -94,9 +103,13 @@ const RegisterHouseKeeperScreen = ({ navigation }: {navigation: any}) => {
           password: '',
           confirmPassword: '',
           phoneNumber: '',
-          experience: '',
+          experience: 0,
           certifications: [],
-          photo: null,
+          photo_url: null,
+          age: 0,  
+          category: '',  
+          employmentType: '',  
+          location: '',  
         }}
         validationSchema={validationSchema}
         onSubmit={handleRegister}
@@ -124,6 +137,48 @@ const RegisterHouseKeeperScreen = ({ navigation }: {navigation: any}) => {
               error={touched.email && !!errors.email}
             />
             {touched.email && errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+
+            <TextInput
+              label="Age"
+              value={values.age.toString()}
+              onChangeText={handleChange('age')}
+              onBlur={handleBlur('age')}
+              style={styles.input}
+              keyboardType="numeric"
+              error={touched.age && !!errors.age}
+            />
+            {touched.age && errors.age && <Text style={styles.errorText}>{errors.age}</Text>}
+
+            <TextInput
+              label="Category"
+              value={values.category}
+              onChangeText={handleChange('category')}
+              onBlur={handleBlur('category')}
+              style={styles.input}
+              error={touched.category && !!errors.category}
+            />
+            {touched.category && errors.category && <Text style={styles.errorText}>{errors.category}</Text>}
+
+            <TextInput
+              label="Employment Type"
+              value={values.employmentType}
+              onChangeText={handleChange('employmentType')}
+              onBlur={handleBlur('employmentType')}
+              style={styles.input}
+              error={touched.employmentType && !!errors.employmentType}
+            />
+            {touched.employmentType && errors.employmentType && <Text style={styles.errorText}>{errors.employmentType}</Text>}
+
+            <TextInput
+              label="Location"
+              value={values.location}
+              onChangeText={handleChange('location')}
+              onBlur={handleBlur('location')}
+              style={styles.input}
+              error={touched.location && !!errors.location}
+            />
+            {touched.location && errors.location && <Text style={styles.errorText}>{errors.location}</Text>}
+
 
             <TextInput
               label="Password"
@@ -160,7 +215,7 @@ const RegisterHouseKeeperScreen = ({ navigation }: {navigation: any}) => {
 
             <TextInput
               label="Experience"
-              value={values.experience}
+              value={values.experience.toString()}
               onChangeText={handleChange('experience')}
               onBlur={handleBlur('experience')}
               style={styles.input}
@@ -173,7 +228,7 @@ const RegisterHouseKeeperScreen = ({ navigation }: {navigation: any}) => {
               value={currentCertification}
               onChangeText={setCurrentCertification}
             />
-            <Button onPress={addCertification}>Add Certification</Button>
+            <Button onPress={() => addCertification(setFieldValue)}>Add Certification</Button>
             {certifications.map((cert, index) => (
               <Text key={index}>{cert}</Text>
             ))}
@@ -181,7 +236,7 @@ const RegisterHouseKeeperScreen = ({ navigation }: {navigation: any}) => {
             <TouchableOpacity onPress={() => pickImage(setFieldValue)}>
               <Text>Pick an Image</Text>
             </TouchableOpacity>
-            {photoUri && <Image source={{ uri: photoUri }} style={{ width: 100, height: 100 }} />}
+            {values.photo_url && <Image source={{ uri: values.photo_url }} style={{ width: 100, height: 100 }} />}
 
             <Button onPress={() => handleSubmit()}>Register</Button>
           </View>

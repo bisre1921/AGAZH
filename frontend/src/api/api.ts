@@ -1,7 +1,9 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from "react-native";
 
-const API_URL = "to be filled";
+
+const API_URL = Platform.OS === "android"? "http://10.4.103.87:8080": "http://localhost:8080";
 
 const api = axios.create({
     baseURL: API_URL,
@@ -53,15 +55,15 @@ interface EmployerData {
   
 // Auth api
 export const registerHousekeeper = (data: HousekeeperData) => {
-    return api.post("/auth/register/housekeeper", data);
+    return api.post("/api/v1/auth/register/housekeeper", data);
 }
 
 export const registerEmployer = (data: EmployerData) => {
-    return api.post("/auth/register/employer", data);
+    return api.post("/api/v1/auth/register/employer", data);
 }
 
-export const login = (email: string, password: string, userType: string) => {
-    return api.post("/auth/login", { email, password, userType });
+export const login = (email: string, password: string, user_type: string) => {
+    return api.post("/api/v1/auth/login", { email, password, user_type });
 }
 
 // housekeeper api

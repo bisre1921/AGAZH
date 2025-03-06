@@ -30,14 +30,18 @@ const RegisterEmployerScreen = ({ navigation }: {navigation: any}) => {
     try {
       setIsLoading(true);
 
-      const { confirmPassword, ...userData } = values;
+      const { confirmPassword,familySize, phoneNumber, ...userData } = values;
+      userData.familySize = parseInt(familySize, 10);
+      userData.phone_number = phoneNumber;
+
+      console.log('Registering employer', userData);
 
       await registerEmployer(userData);
 
       Alert.alert(
         'Employer registered successfully',
         'you can now login with your email and password',
-        [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
+        [{ text: 'OK', onPress: () => setTimeout(() => navigation.navigate('Login'), 500), }]
       );
     } catch (error: any) {
       console.error('Error registering employer', error);
