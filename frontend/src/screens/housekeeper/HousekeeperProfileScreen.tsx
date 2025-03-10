@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useAuth } from '../../contexts/AuthContext';
-import api from '../../api/api';
+import api, { getHousekeeper } from '../../api/api';
 
 interface HousekeeperProfile {
     name: string;
@@ -70,7 +70,7 @@ const HousekeeperProfileScreen = () => {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`/housekeepers/${userInfo.user_id}`);
+      const response = await getHousekeeper(userInfo.user_id);
       setProfile(response.data);
       
       setFormData({

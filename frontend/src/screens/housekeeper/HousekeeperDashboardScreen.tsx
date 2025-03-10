@@ -4,7 +4,10 @@ import { Text, Card, Switch, Button, ActivityIndicator } from 'react-native-pape
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
-import api from '../../api/api';
+import api, { getHousekeeper, updateHousekeeper } from '../../api/api';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '@/src/navigation/type';
 
 interface Profile {
     category: string;
@@ -12,6 +15,7 @@ interface Profile {
     experience: number;
     location: string;
     is_available: boolean;
+    rating: number;
 }
 
 const HousekeeperDashboardScreen = () => {
@@ -26,16 +30,17 @@ const HousekeeperDashboardScreen = () => {
     averageRating: 0,
   });
 
+  type NavigationProp = StackNavigationProp<RootStackParamList, 'HousekeeperDashboardScreen'>;
+
+  const navigation = useNavigation<NavigationProp>();
+
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`/housekeepers/${userInfo.user_id}`);
+      const response = await getHousekeeper(userInfo.user_id);
       setProfile(response.data);
       setIsAvailable(response.data.is_available);
       
-      // This endpoint would need to be added to your backend
-      const statsResponse = await api.get(`/housekeepers/${userInfo.user_id}/stats`);
-      setStats(statsResponse.data);
     } catch (error) {
       console.error('Error fetching profile:', error);
       Alert.alert('Error', 'Failed to load profile data');
@@ -49,20 +54,27 @@ const HousekeeperDashboardScreen = () => {
   }, [userInfo.user_id]);
 
   const toggleAvailability = async () => {
+    if (!profile) return;
+  
     try {
-      await api.put(`/housekeepers/${userInfo.user_id}`, {
-        is_available: !isAvailable,
-      });
+      const updatedProfile = {
+        ...profile,  // Ensure all required fields are included
+        is_available: !isAvailable, // Toggle availability
+      };
+  
+      await updateHousekeeper(userInfo.user_id, updatedProfile);
       setIsAvailable(!isAvailable);
+      console.log("Availability status updated");
       Alert.alert(
-        'Status Updated',
-        `You are now ${!isAvailable ? 'available' : 'unavailable'} for new hirings`
+        "Status Updated",
+        `You are now ${!isAvailable ? "available" : "unavailable"} for new hirings`
       );
     } catch (error) {
-      console.error('Error updating availability:', error);
-      Alert.alert('Error', 'Failed to update availability status');
+      console.error("Error updating availability:", error);
+      Alert.alert("Error", "Failed to update availability status");
     }
   };
+  
 
   if (loading && !profile) {
     return (
@@ -105,37 +117,13 @@ const HousekeeperDashboardScreen = () => {
           <Card style={styles.statsCard}>
             <Card.Content>
               <Ionicons name="star" size={32} color="#F9AA33" style={styles.statsIcon} />
-              <Text style={styles.statsValue}>{stats.averageRating.toFixed(1)}</Text>
+              <Text style={styles.statsValue}>{profile?.rating}</Text>
               <Text style={styles.statsLabel}>Average Rating</Text>
             </Card.Content>
           </Card>
 
-          <Card style={styles.statsCard}>
-            <Card.Content>
-              <Ionicons name="briefcase" size={32} color="#4A6572" style={styles.statsIcon} />
-              <Text style={styles.statsValue}>{stats.totalHirings}</Text>
-              <Text style={styles.statsLabel}>Total Hirings</Text>
-            </Card.Content>
-          </Card>
         </View>
 
-        <View style={styles.statsContainer}>
-          <Card style={styles.statsCard}>
-            <Card.Content>
-              <Ionicons name="time" size={32} color="#FFC107" style={styles.statsIcon} />
-              <Text style={styles.statsValue}>{stats.pendingHirings}</Text>
-              <Text style={styles.statsLabel}>Pending</Text>
-            </Card.Content>
-          </Card>
-
-          <Card style={styles.statsCard}>
-            <Card.Content>
-              <Ionicons name="checkmark-done" size={32} color="#4CAF50" style={styles.statsIcon} />
-              <Text style={styles.statsValue}>{stats.completedHirings}</Text>
-              <Text style={styles.statsLabel}>Completed</Text>
-            </Card.Content>
-          </Card>
-        </View>
 
         <Card style={styles.profileSummaryCard}>
           <Card.Content>
@@ -165,7 +153,7 @@ const HousekeeperDashboardScreen = () => {
             
             <Button
               mode="outlined"
-              onPress={() => {}}
+              onPress={() => navigation.navigate("Profile")}
               style={styles.viewProfileButton}
               icon="account"
             >

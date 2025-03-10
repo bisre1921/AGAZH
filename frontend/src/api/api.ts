@@ -68,28 +68,29 @@ export const login = (email: string, password: string, user_type: string) => {
 
 // housekeeper api
 export const getHousekeeper = (id: string) => {
-    return api.get(`/housekeepers/${id}`);
+    return api.get(`/api/v1/housekeepers/${id}`);
 }
 
 export const getHousekeepers = (filters = {}) => {
-    return api.get("/housekeepers", { params: filters });
+    return api.get("/api/v1/housekeepers", { params: filters });
 }
 
 export const updateHousekeeper = (id: string, data: Partial<HousekeeperData>) => {
-    return api.put(`/housekeepers/${id}`, data);
+    return api.put(`/api/v1/housekeepers/${id}`, data);
 }
 
 export const deleteHousekeeper = (id: string) => {
-    return api.delete(`/housekeepers/${id}`);
+    return api.delete(`/api/v1/housekeepers/${id}`);
 }
+
 
 // Review API
 export const createReview = (data: any) => {
-    return api.post('/reviews', data);
+    return api.post('/api/v1/ratings', data);
 };
   
 export const getHousekeeperReviews = (id: string) => {
-    return api.get(`/reviews/housekeeper/${id}`);
+    return api.get(`/api/v1/ratings/housekeeper/${id}`);
 };
 
 // Hiring API
