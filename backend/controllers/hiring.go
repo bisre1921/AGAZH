@@ -131,3 +131,30 @@ func GetHiringStatus(c *gin.Context) {
 
 	c.JSON(http.StatusOK, hiring)
 }
+
+func GetHiringHistory(c *gin.Context) {
+	// Get employer ID from request parameters
+	employerID := c.Param("employer_id")
+	objID, err := primitive.ObjectIDFromHex(employerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid employer ID"})
+		return
+	}
+
+	// Query the database for hiring records
+	var hirings []models.Hiring
+	cursor, err := config.DB.Collection("hirings").Find(context.Background(), bson.M{"employer_id": objID})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch hiring history"})
+		return
+	}
+
+	// Decode the hiring records
+	if err := cursor.All(context.Background(), &hirings); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode hiring history"})
+		return
+	}
+
+	// Return hiring history as JSON response
+	c.JSON(http.StatusOK, hirings)
+}

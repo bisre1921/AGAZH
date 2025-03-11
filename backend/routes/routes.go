@@ -31,7 +31,7 @@ func SetupEmployerRoutes(router *gin.RouterGroup) {
 	employers := router.Group("/employers")
 	employers.Use(middleware.AuthMiddleware())
 	{
-		// to do later
+		employers.GET("/:id", controllers.GetEmployer)
 	}
 }
 
@@ -41,6 +41,7 @@ func SetupHiringRoutes(router *gin.RouterGroup) {
 	{
 		hiring.POST("", controllers.CreateHiring)
 		hiring.GET("/:id", controllers.GetHiringStatus)
+		hiring.GET("/employer/:employer_id", controllers.GetHiringHistory)
 	}
 }
 

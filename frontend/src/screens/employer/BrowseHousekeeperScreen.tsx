@@ -82,7 +82,7 @@ const BrowseHousekeepersScreen = ({ navigation }: {navigation: any}) => {
     }));
   };
 
-  const filteredHousekeepers = housekeepers.filter((housekeeper) => {
+  const filteredHousekeepers = housekeepers?.filter((housekeeper) => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       return (

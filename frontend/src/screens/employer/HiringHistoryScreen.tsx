@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
-import api from '../../api/api';
+import api, { getHiringHistory } from '../../api/api';
 
 interface Hiring {
     id: string;
@@ -26,7 +26,7 @@ const HiringHistoryScreen = ({ navigation }: {navigation: any}) => {
     try {
       setLoading(true);
       // This endpoint would need to be added to your backend
-      const response = await api.get(`/hiring/employer/${userInfo?.user_id}`);
+      const response = await getHiringHistory(userInfo?.user_id)
       setHirings(response.data);
     } catch (error) {
       console.error('Error fetching hiring history:', error);

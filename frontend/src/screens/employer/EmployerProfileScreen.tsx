@@ -4,7 +4,7 @@ import { Text, Card, Button, TextInput, Divider, ActivityIndicator } from 'react
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
-import api from '../../api/api';
+import api, { getEmployer } from '../../api/api';
 
 interface EmployerProfile {
     name: string;
@@ -30,7 +30,7 @@ const EmployerProfileScreen = () => {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`/employers/${userInfo.user_id}`);
+      const response = await getEmployer(userInfo.user_id)
       setProfile(response.data);
       setFormData({
         name: response.data.name || '',
