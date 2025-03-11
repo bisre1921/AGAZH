@@ -40,6 +40,9 @@ func CreateHiring(c *gin.Context) {
 	var employer models.Employer
 	var housekeeper models.Housekeeper
 
+	// hiring.EmployerID, _ = primitive.ObjectIDFromHex(hiring.EmployerID.Hex())
+
+	fmt.Println(hiring.EmployerID)
 	err := config.DB.Collection("employers").FindOne(context.Background(), bson.M{"_id": hiring.EmployerID}).Decode(&employer)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Employer not found"})

@@ -99,6 +99,7 @@ export const getHousekeeperReviews = (id: string) => {
 
 // Hiring API
 export const createHiring = (data: any) => {
+    console.log(data)
     return api.post('/api/v1/hiring', data);
 };
   

@@ -7,6 +7,9 @@ import * as Yup from 'yup';
 import { Calendar, DateData } from 'react-native-calendars';
 import { createHiring } from '../../api/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { RootStackParamList } from '@/src/navigation/type';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
 const HireSchema = Yup.object().shape({
   requirements: Yup.string().required('Requirements are required'),
@@ -16,12 +19,19 @@ const HireSchema = Yup.object().shape({
     .required('Salary offer is required'),
 });
 
+
+
 const HireHousekeeperScreen = ({ route, navigation }: { route: any; navigation: any }) => {
   const { housekeeper } = route.params;
   const { userInfo } = useAuth();
   const [selectedDate, setSelectedDate] = useState('');
   const [deliveryType, setDeliveryType] = useState('DELIVERY');
   const [loading, setLoading] = useState(false);
+
+  // type NavigationProp = StackNavigationProp<RootStackParamList, 'HiringStataus', 'Browse'>;
+  type NavigationProp = StackNavigationProp<RootStackParamList>;
+
+  navigation = useNavigation<NavigationProp>();
 
   const handleHire = async (values: any) => {
     if (!selectedDate) {
@@ -33,12 +43,12 @@ const HireHousekeeperScreen = ({ route, navigation }: { route: any; navigation: 
       setLoading(true);
       
       const hiringData = {
-        employerID: userInfo.user_id,
-        housekeeperID: housekeeper.id,
+        employer_id: userInfo.user_id,
+        housekeeper_id: housekeeper.id,
         requirements: values.requirements,
-        salaryOffer: parseFloat(values.salaryOffer),
-        startDate: new Date(selectedDate).toISOString(),
-        deliveryType: deliveryType,
+        salary_offer: parseFloat(values.salaryOffer),
+        start_date: new Date(selectedDate).toISOString(),
+        delivery_type: deliveryType,
       };
       
       const response = await createHiring(hiringData);
