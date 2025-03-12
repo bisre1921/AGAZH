@@ -56,7 +56,7 @@ const HireHousekeeperScreen = ({ route, navigation }: { route: any; navigation: 
         throw new Error('Invalid response from server');
       }
       
-      
+      navigation.navigate('HiringStatus', { hiringId: response.data.id });
       Alert.alert(
         'Hiring Request Sent',
         'Your hiring request has been sent successfully. The AGAZH team will contact you soon.',
