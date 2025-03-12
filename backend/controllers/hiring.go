@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // CreateHiring godoc
@@ -133,6 +134,55 @@ func GetHiringStatus(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, hiring)
+}
+
+func UpdateHiringStatus(c *gin.Context) {
+	hiringID := c.Param("id")
+	var statusUpdate struct {
+		Status string `json:"status"`
+	}
+
+	if err := c.ShouldBindJSON(&statusUpdate); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	// Find the hiring request by ID
+	collection := config.DB.Collection("hirings") // Ensure the correct collection name
+	hiringObjectID, err := primitive.ObjectIDFromHex(hiringID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Hiring ID"})
+		return
+	}
+
+	// Update statement using the correct BSON structure with keyed fields
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "status", Value: statusUpdate.Status},
+			{Key: "updated_at", Value: time.Now()},
+		}},
+	}
+
+	result, err := collection.UpdateOne(
+		c,
+		bson.D{{Key: "_id", Value: hiringObjectID}},
+		update,
+	)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Hiring not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update hiring status"})
+		}
+		return
+	}
+
+	if result.MatchedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Hiring not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Hiring status updated successfully"})
 }
 
 func GetHiringHistory(c *gin.Context) {

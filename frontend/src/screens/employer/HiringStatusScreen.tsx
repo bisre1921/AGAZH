@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { Text, Card, Button, ActivityIndicator, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { getHiringStatus, getHousekeeper } from '../../api/api';
+import { getHiringStatus, updateHiringStatus, getHousekeeper } from '../../api/api';
 
 interface Housekeeper {
   id: string;
@@ -98,6 +98,19 @@ const HiringStatusScreen = ({ route, navigation }: { route: any; navigation: any
     }
   };
 
+  const handleUpdateStatus = async (newStatus: string) => {
+    if (!hiring) return;
+
+    try {
+      await updateHiringStatus(hiring.id, { status: newStatus });
+      setHiring((prevHiring) => (prevHiring ? { ...prevHiring, status: newStatus } : null));
+      Alert.alert('Success', `Hiring status updated to ${newStatus}`);
+    } catch (error) {
+      console.error('Error updating hiring status:', error);
+      Alert.alert('Error', 'Failed to update hiring status');
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -107,7 +120,6 @@ const HiringStatusScreen = ({ route, navigation }: { route: any; navigation: any
     );
   }
 
-  // Added a check to ensure hiring is not null before trying to access its properties.
   if (!hiring || !housekeeper) {
     return (
       <View style={styles.loadingContainer}>
@@ -196,6 +208,35 @@ const HiringStatusScreen = ({ route, navigation }: { route: any; navigation: any
                 Write a Review
               </Button>
             )}
+
+            {hiring.status !== 'COMPLETED' && (
+              <Button
+                mode="contained"
+                onPress={() => handleUpdateStatus('COMPLETED')}
+                style={styles.updateButton}
+              >
+                Mark as Completed
+              </Button>
+            )}
+
+            {hiring.status === 'PENDING' && (
+              <>
+                <Button
+                  mode="contained"
+                  onPress={() => handleUpdateStatus('APPROVED')}
+                  style={styles.updateButton}
+                >
+                  Approve Hiring
+                </Button>
+                <Button
+                  mode="contained"
+                  onPress={() => handleUpdateStatus('REJECTED')}
+                  style={styles.updateButton}
+                >
+                  Reject Hiring
+                </Button>
+              </>
+            )}
           </Card.Content>
         </Card>
       </ScrollView>
@@ -206,10 +247,66 @@ const HiringStatusScreen = ({ route, navigation }: { route: any; navigation: any
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#F0F0F0',
   },
   scrollContent: {
-    padding: 16,
+    paddingBottom: 20,
+  },
+  card: {
+    margin: 10,
+  },
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statusTextContainer: {
+    marginLeft: 10,
+  },
+  statusTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  statusValue: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 15,
+  },
+  housekeeperContainer: {
+    marginTop: 10,
+  },
+  housekeeperName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  housekeeperDetail: {
+    fontSize: 14,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 5,
+  },
+  detailLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  detailValue: {
+    fontSize: 14,
+  },
+  infoText: {
+    fontSize: 14,
+    marginTop: 10,
+    color: '#616161',
+  },
+  updateButton: {
+    marginTop: 10,
+  },
+  reviewButton: {
+    marginTop: 10,
   },
   loadingContainer: {
     flex: 1,
@@ -217,72 +314,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 16,
-    color: '#4A6572',
-  },
-  card: {
-    backgroundColor: '#FFFFFF',
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  statusTextContainer: {
-    marginLeft: 16,
-  },
-  statusTitle: {
-    fontSize: 14,
-    color: '#4A6572',
-  },
-  statusValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    marginTop: 10,
+    fontSize: 18,
   },
   divider: {
-    marginVertical: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#344955',
-    marginBottom: 12,
-  },
-  housekeeperContainer: {
-    marginBottom: 8,
-  },
-  housekeeperName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#344955',
-    marginBottom: 4,
-  },
-  housekeeperDetail: {
-    fontSize: 14,
-    color: '#4A6572',
-    marginBottom: 4,
-  },
-  detailRow: {
-    marginBottom: 8,
-  },
-  detailLabel: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#4A6572',
-    marginBottom: 4,
-  },
-  detailValue: {
-    fontSize: 16,
-    color: '#344955',
-  },
-  infoText: {
-    fontSize: 14,
-    color: '#4A6572',
-    fontStyle: 'italic',
-    marginBottom: 16,
-  },
-  reviewButton: {
-    backgroundColor: '#F9AA33',
+    marginVertical: 10,
   },
 });
 

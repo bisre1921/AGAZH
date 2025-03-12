@@ -41,6 +41,7 @@ func SetupHiringRoutes(router *gin.RouterGroup) {
 	{
 		hiring.POST("", controllers.CreateHiring)
 		hiring.GET("/:id", controllers.GetHiringStatus)
+		hiring.PUT("/:id", controllers.UpdateHiringStatus)
 		hiring.GET("/employer/:employer_id", controllers.GetHiringHistory)
 	}
 }
