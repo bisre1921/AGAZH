@@ -33,6 +33,7 @@ const WriteReviewScreen = ({ route, navigation }: {route: any, navigation: any})
       
       await createReview(reviewData);
       
+      navigation.goBack();
       Alert.alert(
         'Review Submitted',
         'Thank you for your feedback!',
