@@ -150,7 +150,7 @@ const HousekeeperReviewsScreen = () => {
               </Card.Content>
             </Card>
             
-            {reviews.length > 0 ? (
+            {reviews?.length > 0 ? (
               <Text style={styles.reviewsTitle}>All Reviews</Text>
             ) : (
               <Card style={styles.emptyCard}>

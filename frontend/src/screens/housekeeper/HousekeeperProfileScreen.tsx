@@ -185,17 +185,6 @@ const HousekeeperProfileScreen = () => {
     }
   };
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Confirm Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Logout', onPress: logout },
-      ]
-    );
-  };
-
   if (loading && !profile) {
     return (
       <View style={styles.loadingContainer}>
@@ -468,7 +457,7 @@ const HousekeeperProfileScreen = () => {
         
         <Button
           mode="outlined"
-          onPress={handleLogout}
+          onPress={logout}
           style={styles.logoutButton}
           icon="logout"
         >
