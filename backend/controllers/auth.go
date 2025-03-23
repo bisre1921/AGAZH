@@ -152,5 +152,13 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"token": tokenString})
+	c.JSON(http.StatusOK, gin.H{
+		"token": tokenString,
+		"user": gin.H{
+			"user_id":   user["_id"],
+			"user_type": credentials.UserType,
+			"exp":       time.Now().Add(time.Hour * 24).Unix(),
+		},
+	})
+
 }
