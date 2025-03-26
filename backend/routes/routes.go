@@ -32,6 +32,7 @@ func SetupEmployerRoutes(router *gin.RouterGroup) {
 	employers.Use(middleware.AuthMiddleware())
 	{
 		employers.GET("/:id", controllers.GetEmployer)
+		employers.PUT("/:id", controllers.UpdateEmployer)
 	}
 }
 

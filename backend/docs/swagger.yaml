@@ -24,6 +24,8 @@ definitions:
         type: string
       name:
         type: string
+      password:
+        type: string
       phone_number:
         type: string
       updated_at:
@@ -32,6 +34,7 @@ definitions:
     - address
     - email
     - name
+    - password
     - phone_number
     type: object
   models.EmploymentType:
@@ -125,6 +128,8 @@ definitions:
         type: string
       name:
         type: string
+      password:
+        type: string
       phone_number:
         type: string
       photo_url:
@@ -148,6 +153,7 @@ definitions:
     - employment_type
     - location
     - name
+    - password
     - phone_number
     type: object
   models.LoginCredentials:
@@ -268,6 +274,73 @@ paths:
       summary: Creates a new review for a housekeeper
       tags:
       - review
+  /employer/{id}:
+    get:
+      consumes:
+      - application/json
+      description: This endpoint retrieves an employer's details by their ID
+      parameters:
+      - description: Employer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Employer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Retrieves details of a specific employer
+      tags:
+      - employer
+    put:
+      consumes:
+      - application/json
+      description: This endpoint allows updating the details of a specific employer
+      parameters:
+      - description: Employer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated employer data
+        in: body
+        name: updates
+        required: true
+        schema:
+          $ref: '#/definitions/models.Employer'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Updates an employer's details
+      tags:
+      - employer
   /hiring/{id}:
     get:
       consumes:

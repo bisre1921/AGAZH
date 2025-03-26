@@ -107,6 +107,107 @@ const docTemplate = `{
                 }
             }
         },
+        "/employer/{id}": {
+            "get": {
+                "description": "This endpoint retrieves an employer's details by their ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "employer"
+                ],
+                "summary": "Retrieves details of a specific employer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Employer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Employer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "This endpoint allows updating the details of a specific employer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "employer"
+                ],
+                "summary": "Updates an employer's details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Employer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated employer data",
+                        "name": "updates",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Employer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/hiring/{id}": {
             "get": {
                 "description": "This endpoint retrieves the status of a specific hiring request by its ID",
@@ -561,6 +662,7 @@ const docTemplate = `{
                 "address",
                 "email",
                 "name",
+                "password",
                 "phone_number"
             ],
             "properties": {
@@ -580,6 +682,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 },
                 "phone_number": {
@@ -694,6 +799,7 @@ const docTemplate = `{
                 "employment_type",
                 "location",
                 "name",
+                "password",
                 "phone_number"
             ],
             "properties": {
@@ -731,6 +837,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 },
                 "phone_number": {
