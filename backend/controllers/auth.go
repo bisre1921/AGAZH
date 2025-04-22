@@ -102,7 +102,7 @@ func RegisterEmployer(c *gin.Context) {
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 401 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
-// @Router /login [post]
+// @Router /auth/login [post]
 func Login(c *gin.Context) {
 	var credentials struct {
 		Email    string `json:"email" binding:"required,email"`

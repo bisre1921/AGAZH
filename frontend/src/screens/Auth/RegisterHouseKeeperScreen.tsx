@@ -22,6 +22,8 @@ const validationSchema = Yup.object().shape({
   category: Yup.string().required('Category is required'),
   employmentType: Yup.string().required('Employment Type is required'),
   location: Yup.string().required('Location is required'),
+  religion: Yup.string().required('Religion is required'),
+  placeOfBirth: Yup.string().required('Place of Birth is required'),
 });
 
 
@@ -110,6 +112,8 @@ const RegisterHouseKeeperScreen = ({ navigation }: { navigation: any }) => {
           category: '',  
           employmentType: '',  
           location: '',  
+          religion: '',
+          placeOfBirth: '',
         }}
         validationSchema={validationSchema}
         onSubmit={handleRegister}
@@ -178,6 +182,26 @@ const RegisterHouseKeeperScreen = ({ navigation }: { navigation: any }) => {
               error={touched.location && !!errors.location}
             />
             {touched.location && errors.location && <Text style={styles.errorText}>{errors.location}</Text>}
+
+            <TextInput
+              label="Religion"
+              value={values.religion}
+              onChangeText={handleChange('religion')}
+              onBlur={handleBlur('religion')}
+              style={styles.input}
+              error={touched.religion && !!errors.religion}
+            />
+            {touched.religion && errors.religion && <Text style={styles.errorText}>{errors.religion}</Text>}
+
+            <TextInput
+              label="Place of Birth"
+              value={values.placeOfBirth}
+              onChangeText={handleChange('placeOfBirth')}
+              onBlur={handleBlur('placeOfBirth')}
+              style={styles.input}
+              error={touched.placeOfBirth && !!errors.placeOfBirth}
+            />
+            {touched.placeOfBirth && errors.placeOfBirth && <Text style={styles.errorText}>{errors.placeOfBirth}</Text>}
 
 
             <TextInput

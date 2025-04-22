@@ -3,7 +3,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 
 
-const API_URL = Platform.OS === "android"? "http://10.4.103.87:8080": "http://localhost:8080";
+// const API_URL = Platform.OS === "android"? "http://10.4.103.87:8080": "http://localhost:8080";
+const API_URL = "http://localhost:8080";
 
 const api = axios.create({
     baseURL: API_URL,

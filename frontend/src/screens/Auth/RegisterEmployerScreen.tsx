@@ -21,6 +21,9 @@ const RegisterEmployerSchema = Yup.object().shape({
     .typeError('Family size must be a number')
     .min(1, 'Family size must be at least 1')
     .required('Family size is required'),
+  religionPreference: Yup.string().required('Religion preference is required'),
+  placeOfBirthPreference: Yup.string().required('Place of birth preference is required'),
+  
 });
 
 const RegisterEmployerScreen = ({ navigation }: {navigation: any}) => {
@@ -69,6 +72,8 @@ const RegisterEmployerScreen = ({ navigation }: {navigation: any}) => {
             address: '',
             phoneNumber: '',
             familySize: '',
+            religionPreference: '',
+            placeOfBirthPreference: '',
           }}
           validationSchema={RegisterEmployerSchema}
           onSubmit={handleRegister}
@@ -101,31 +106,6 @@ const RegisterEmployerScreen = ({ navigation }: {navigation: any}) => {
                 <Text style={styles.errorText}>{errors.email}</Text>
               )}
 
-              <TextInput
-                label="Password"
-                value={values.password}
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                style={styles.input}
-                secureTextEntry
-                error={touched.password && !!errors.password}
-              />
-              {touched.password && errors.password && (
-                <Text style={styles.errorText}>{errors.password}</Text>
-              )}
-
-              <TextInput
-                label="Confirm Password"
-                value={values.confirmPassword}
-                onChangeText={handleChange('confirmPassword')}
-                onBlur={handleBlur('confirmPassword')}
-                style={styles.input}
-                secureTextEntry
-                error={touched.confirmPassword && !!errors.confirmPassword}
-              />
-              {touched.confirmPassword && errors.confirmPassword && (
-                <Text style={styles.errorText}>{errors.confirmPassword}</Text>
-              )}
 
               <TextInput
                 label="Address"
@@ -163,6 +143,57 @@ const RegisterEmployerScreen = ({ navigation }: {navigation: any}) => {
               />
               {touched.familySize && errors.familySize && (
                 <Text style={styles.errorText}>{errors.familySize}</Text>
+              )}
+
+              <TextInput
+                label="Religion Preference"
+                value={values.religionPreference}
+                onChangeText={handleChange('religionPreference')}
+                onBlur={handleBlur('religionPreference')}
+                style={styles.input}
+                error={touched.religionPreference && !!errors.religionPreference}
+              />
+              {touched.religionPreference && errors.religionPreference && (
+                <Text style={styles.errorText}>{errors.religionPreference}</Text>
+              )}
+
+              <TextInput
+                label="Place of Birth Preference"
+                value={values.placeOfBirthPreference}
+                onChangeText={handleChange('placeOfBirthPreference')}
+                onBlur={handleBlur('placeOfBirthPreference')}
+                style={styles.input}
+                error={touched.placeOfBirthPreference && !!errors.placeOfBirthPreference}
+              />
+              {touched.placeOfBirthPreference && errors.placeOfBirthPreference && (
+                <Text style={styles.errorText}>{errors.placeOfBirthPreference}</Text>
+              )}
+
+
+              <TextInput
+                label="Password"
+                value={values.password}
+                onChangeText={handleChange('password')}
+                onBlur={handleBlur('password')}
+                style={styles.input}
+                secureTextEntry
+                error={touched.password && !!errors.password}
+              />
+              {touched.password && errors.password && (
+                <Text style={styles.errorText}>{errors.password}</Text>
+              )}
+
+              <TextInput
+                label="Confirm Password"
+                value={values.confirmPassword}
+                onChangeText={handleChange('confirmPassword')}
+                onBlur={handleBlur('confirmPassword')}
+                style={styles.input}
+                secureTextEntry
+                error={touched.confirmPassword && !!errors.confirmPassword}
+              />
+              {touched.confirmPassword && errors.confirmPassword && (
+                <Text style={styles.errorText}>{errors.confirmPassword}</Text>
               )}
 
               <Button

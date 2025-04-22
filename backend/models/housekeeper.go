@@ -32,6 +32,8 @@ type Housekeeper struct {
 	Certifications []string           `json:"certifications,omitempty" bson:"certifications,omitempty"`
 	Location       string             `json:"location,omitempty" bson:"location,omitempty" binding:"required"`
 	PhoneNumber    string             `json:"phone_number,omitempty" bson:"phone_number,omitempty" binding:"required"`
+	Religion       string             `json:"religion,omitempty" bson:"religion,omitempty"`
+	PlaceOfBirth   string             `json:"place_of_birth,omitempty" bson:"place_of_birth,omitempty"`
 	Rating         float64            `json:"rating,omitempty" bson:"rating,omitempty"`
 	Reviews        []Review           `json:"reviews,omitempty" bson:"reviews,omitempty"`
 	IsAvailable    bool               `json:"is_available,omitempty" bson:"is_available,omitempty"`
