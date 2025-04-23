@@ -18,8 +18,8 @@ import (
 // @Tags housekeeper
 // @Accept json
 // @Produce json
-// @Param category query string false "Category"
-// @Param employment_type query string false "Employment Type"
+// @Param category query string false "Category (NORMAL, CHILD_CARE, CLEANING)"
+// @Param employment_type query string false "Employment Type (LIVE_OUT, LIVE_IN)"
 // @Param location query string false "Location"
 // @Success 200 {array} models.Housekeeper
 // @Failure 500 {object} models.ErrorResponse

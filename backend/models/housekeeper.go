@@ -10,12 +10,12 @@ type Category string
 type EmploymentType string
 
 const (
-	Normal    Category = "NORMAL"
-	ChildCare Category = "CHILD_CARE"
-	Cleaner   Category = "CLEANER"
+	NormalCategory    Category = "NORMAL"
+	ChildCareCategory Category = "CHILD_CARE"
+	CleaningCategory  Category = "CLEANING"
 
-	FullTime EmploymentType = "FULL_TIME"
-	PartTime EmploymentType = "PART_TIME"
+	LiveOutEmployment EmploymentType = "LIVE_OUT"
+	LiveInEmployment  EmploymentType = "LIVE_IN"
 )
 
 type Housekeeper struct {
