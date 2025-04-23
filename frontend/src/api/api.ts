@@ -4,7 +4,8 @@ import { Platform } from "react-native";
 
 
 // const API_URL = Platform.OS === "android"? "http://10.4.103.87:8080": "http://localhost:8080";
-const API_URL = "http://localhost:8080";
+// const API_URL = "http://localhost:8080";
+const API_URL = "https://agazh-1.onrender.com"
 
 const api = axios.create({
     baseURL: API_URL,
@@ -87,6 +88,10 @@ export const deleteHousekeeper = (id: string) => {
 // employer api
 export const getEmployer = (id: string) => {
     return api.get(`/api/v1/employers/${id}`);
+}
+
+export const updateEmployer = (id: string, data: Partial<EmployerData>) => {
+    return api.put(`/api/v1/employers/${id}`, data);
 }
 
 // Review API

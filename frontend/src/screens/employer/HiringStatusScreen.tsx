@@ -32,6 +32,7 @@ interface Hiring {
   requirements: string;
   created_at: string;
   housekeeper_id: string;
+  employer_id: string; // Add employer_id to the Hiring interface
 }
 
 const HiringStatusScreen = ({ route, navigation }: { route: any; navigation: any }) => {
@@ -44,13 +45,16 @@ const HiringStatusScreen = ({ route, navigation }: { route: any; navigation: any
     const fetchHiringDetails = async () => {
       try {
         const hiringResponse = await getHiringStatus(hiringId);
+        if(!hiringResponse.data){
+          throw new Error("Hiring data is null");
+        }
         setHiring(hiringResponse.data);
         
         const housekeeperResponse = await getHousekeeper(hiringResponse.data.housekeeper_id);
         setHousekeeper(housekeeperResponse.data);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching hiring details:', error);
-        Alert.alert('Error', 'Failed to load hiring details');
+        Alert.alert('Error', `Failed to load hiring details: ${error.message || 'Unknown error'}`); // show the error message
       } finally {
         setLoading(false);
       }
@@ -323,3 +327,4 @@ const styles = StyleSheet.create({
 });
 
 export default HiringStatusScreen;
+

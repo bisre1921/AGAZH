@@ -29,18 +29,20 @@ const HousekeeperReviewsScreen = () => {
     try {
       setLoading(true);
       const response = await getHousekeeperReviews(userInfo.user_id);
-      setReviews(response.data);
-      
-      const totalReviews = response.data.length;
+      const reviewsData = response?.data || []; // Add this line to handle null or undefined
+
+      setReviews(reviewsData);
+
+      const totalReviews = reviewsData.length;
       let sum = 0;
       const counts: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-      
-      response.data.forEach((review: any) => {
+
+      reviewsData.forEach((review: any) => {
         const rating = Math.floor(review.rating);
         counts[rating] = (counts[rating] || 0) + 1;
         sum += review.rating;
       });
-  
+
       setStats({
         averageRating: totalReviews > 0 ? sum / totalReviews : 0,
         totalReviews,
@@ -54,7 +56,6 @@ const HousekeeperReviewsScreen = () => {
       setRefreshing(false);
     }
   };
-
   useEffect(() => {
     fetchReviews();
   }, [userInfo.user_id]);

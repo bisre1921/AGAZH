@@ -45,63 +45,72 @@ const RootNavigator = () => {
       {!isAuthenticated ? (
         // Auth screens
         <Stack.Group>
-          <Stack.Screen 
-            name="UserType" 
-            component={UserTypeScreen} 
+          <Stack.Screen
+            name="UserType"
+            component={UserTypeScreen}
             options={{ title: 'Welcome to AGAZH' }}
           />
-          <Stack.Screen 
-            name="Login" 
-            component={LoginScreen} 
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
             options={{ title: 'Login' }}
           />
-          <Stack.Screen 
-            name="RegisterEmployer" 
-            component={RegisterEmployerScreen} 
+          <Stack.Screen
+            name="RegisterEmployer"
+            component={RegisterEmployerScreen}
             options={{ title: 'Register as Employer' }}
           />
-          <Stack.Screen 
-            name="RegisterHousekeeper" 
-            component={RegisterHousekeeperScreen} 
+          <Stack.Screen
+            name="RegisterHousekeeper"
+            component={RegisterHousekeeperScreen}
             options={{ title: 'Register as Housekeeper' }}
           />
         </Stack.Group>
       ) : userType === 'employer' ? (
         // Employer screens
         <Stack.Group>
-          <Stack.Screen 
-            name="EmployerHome" 
-            component={EmployerTabNavigator} 
+          <Stack.Screen
+            name="EmployerHome"
+            component={EmployerTabNavigator}
             options={{ headerShown: false }}
           />
-          <Stack.Screen 
-            name="HousekeeperDetail" 
-            component={HousekeeperDetailScreen} 
+          <Stack.Screen
+            name="HousekeeperDetail"
+            component={HousekeeperDetailScreen}
             options={{ title: 'Housekeeper Details' }}
           />
-          <Stack.Screen 
-            name="HireHousekeeper" 
-            component={HireHousekeeperScreen} 
+          <Stack.Screen
+            name="HireHousekeeper"
+            component={HireHousekeeperScreen}
             options={{ title: 'Hire Housekeeper' }}
           />
-          <Stack.Screen 
-            name="HiringStatus" 
-            component={HiringStatusScreen} 
+          <Stack.Screen
+            name="HiringStatus"
+            component={HiringStatusScreen}
             options={{ title: 'Hiring Status' }}
           />
-          <Stack.Screen 
-            name="WriteReview" 
-            component={WriteReviewScreen} 
+          <Stack.Screen
+            name="WriteReview"
+            component={WriteReviewScreen}
             options={{ title: 'Write a Review' }}
           />
         </Stack.Group>
-      ) : (
+      ) : userType === 'housekeeper' ? ( // Corrected condition
         // Housekeeper screens
         <Stack.Group>
-          <Stack.Screen 
-            name="HousekeeperHome" 
-            component={HousekeeperTabNavigator} 
+          <Stack.Screen
+            name="HousekeeperHome"
+            component={HousekeeperTabNavigator}
             options={{ headerShown: false }}
+          />
+        </Stack.Group>
+      ) : (
+        //Added a fallback, so if for some reason userType is neither, we go to login
+        <Stack.Group>
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ title: 'Login' }}
           />
         </Stack.Group>
       )}

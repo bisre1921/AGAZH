@@ -4,7 +4,7 @@ import { Text, Card, Button, TextInput, Divider, ActivityIndicator } from 'react
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
-import api, { getEmployer } from '../../api/api';
+import api, { getEmployer, updateEmployer } from '../../api/api';
 
 interface EmployerProfile {
     name: string;
@@ -54,12 +54,24 @@ const EmployerProfileScreen = () => {
   const handleUpdateProfile = async () => {
     try {
       setLoading(true);
-      await api.put(`/employers/${userInfo.user_id}`, {
+      // await api.put(`/employer/${userInfo.user_id}`, {
+      //   name: formData.name,
+      //   address: formData.address,
+      //   phone_number: formData.phoneNumber,
+      //   family_size: parseInt(formData.familySize) || 0,
+      // });
+      let processedData = {
         name: formData.name,
         address: formData.address,
         phone_number: formData.phoneNumber,
         family_size: parseInt(formData.familySize) || 0,
-      });
+      };
+
+      const response = await updateEmployer(userInfo.user_id, processedData);
+      if (response.status !== 200) {
+        throw new Error('Failed to update profile');
+      }
+
       setEditing(false);
       fetchProfile();
       Alert.alert('Success', 'Profile updated successfully');

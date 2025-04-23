@@ -63,21 +63,33 @@ func UpdateEmployer(c *gin.Context) {
 	var updates models.Employer
 	if err := c.ShouldBindJSON(&updates); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return // Important: Return after error
+	}
+
+	// Construct the update document using $set
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "name", Value: updates.Name},
+			{Key: "address", Value: updates.Address},
+			{Key: "phone_number", Value: updates.PhoneNumber},
+			{Key: "family_size", Value: updates.FamilySize},
+			// Add other fields you want to update
+		}},
 	}
 
 	result, err := config.DB.Collection("employers").UpdateOne(
 		context.Background(),
 		bson.M{"_id": id},
-		bson.M{"$set": updates},
+		update,
 	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while updating employer"})
-		return
+		return // Important: Return after error
 	}
 
 	if result.MatchedCount == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Employer not found"})
-		return
+		return // Important: Return after error
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Employer updated successfully"})

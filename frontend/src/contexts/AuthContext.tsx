@@ -38,7 +38,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
                 const storedUserType = await AsyncStorage.getItem('userType');
                 const storedUserInfo = await AsyncStorage.getItem('userInfo');
 
-                if (token && storedUserInfo) {
+                if (token && storedUserInfo && storedUserType) { // Add check for storedUserType
                     setUserToken(token);
                     setUserInfo(JSON.parse(storedUserInfo));
                     setUserType(storedUserType);
@@ -62,12 +62,12 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
             const decoded = jwtDecode(token);
 
             await AsyncStorage.setItem('token', token);
-            await AsyncStorage.setItem('userType', user_type);
+            await AsyncStorage.setItem('userType', user_type); // Corrected variable name
             await AsyncStorage.setItem('userInfo', JSON.stringify(decoded));
 
             setUserToken(token);
             setUserInfo(decoded);
-            setUserType(userType);
+            setUserType(user_type); //  This is the MOST important line
         } catch (error) {
             console.error('Error logging in', error);
             throw error;
