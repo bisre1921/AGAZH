@@ -19,3 +19,10 @@ type Employer struct {
 	CreatedAt              time.Time          `json:"created_at,omitempty" bson:"created_at,omitempty"`
 	UpdatedAt              time.Time          `json:"updated_at,omitempty" bson:"updated_at,omitempty"`
 }
+
+type EmployerUpdate struct {
+	Name        string `json:"name,omitempty" bson:"name,omitempty"`
+	Address     string `json:"address,omitempty" bson:"address,omitempty"`
+	PhoneNumber string `json:"phone_number,omitempty" bson:"phone_number,omitempty"`
+	FamilySize  int    `json:"family_size,omitempty" bson:"family_size,omitempty"`
+}

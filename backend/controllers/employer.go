@@ -47,7 +47,7 @@ func GetEmployer(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "Employer ID"
-// @Param updates body models.Employer true "Updated employer data"
+// @Param updates body models.EmployerUpdate true "Updated employer data"
 // @Success 200 {object} models.GenericResponse
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 404 {object} models.ErrorResponse

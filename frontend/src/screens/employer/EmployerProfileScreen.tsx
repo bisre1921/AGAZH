@@ -67,7 +67,9 @@ const EmployerProfileScreen = () => {
         family_size: parseInt(formData.familySize) || 0,
       };
 
+      console.log('Processed data:', processedData);
       const response = await updateEmployer(userInfo.user_id, processedData);
+      console.log('Update response:', response);
       if (response.status !== 200) {
         throw new Error('Failed to update profile');
       }
