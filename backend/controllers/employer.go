@@ -60,7 +60,7 @@ func UpdateEmployer(c *gin.Context) {
 		return
 	}
 
-	var updates models.Employer
+	var updates models.EmployerUpdate
 	if err := c.ShouldBindJSON(&updates); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return // Important: Return after error
