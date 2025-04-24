@@ -25,6 +25,8 @@ interface Housekeeper {
   photo_url?: string;
   rating?: number;
   age: number;
+  religion?: string;
+  place_of_birth?: string;
   certifications?: string[];
   phone_number: string;
   reviews?: string[];
@@ -87,6 +89,18 @@ const HousekeeperDetailScreen = ({ route, navigation }: { route: any; navigation
               <Ionicons name="location-outline" size={20} color="#4A6572" />
               <Text style={styles.detailText}>{housekeeper.location}</Text>
             </View>
+            {housekeeper.religion && (
+              <View style={styles.detailRow}>
+                <Ionicons name="information-circle-outline" size={20} color="#4A6572" />
+                <Text style={styles.detailText}>{housekeeper.religion}</Text>
+              </View>
+            )}
+            {housekeeper.place_of_birth && (
+              <View style={styles.detailRow}>
+                <Ionicons name="earth-outline" size={20} color="#4A6572" />
+                <Text style={styles.detailText}>{housekeeper.place_of_birth}</Text>
+              </View>
+            )}
             <View style={styles.detailRow}>
               <Ionicons name="call-outline" size={20} color="#4A6572" />
               <Text style={styles.detailText}>{housekeeper.phone_number}</Text>
@@ -303,3 +317,4 @@ const styles = StyleSheet.create({
 });
 
 export default HousekeeperDetailScreen;
+

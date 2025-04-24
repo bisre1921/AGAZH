@@ -84,16 +84,16 @@ const BrowseHousekeepersScreen = ({ navigation }: { navigation: any }) => {
     };
 
     const handleEmploymentTypeChange = (value: string | null) => {
-      console.log('Employment Type Changed to:', value);
-      setFilters((prev) => ({
-          ...prev,
-          employment_type: value as 'LIVE_OUT' | 'LIVE_IN' | null,
-      }));
-      console.log('Current Filters:', filters);
-      if (Platform.OS === 'ios') {
-          setIsEmploymentTypePickerVisible(false);
-      }
-  };
+        console.log('Employment Type Changed to:', value);
+        setFilters((prev) => ({
+            ...prev,
+            employment_type: value as 'LIVE_OUT' | 'LIVE_IN' | null,
+        }));
+        console.log('Current Filters:', filters);
+        if (Platform.OS === 'ios') {
+            setIsEmploymentTypePickerVisible(false);
+        }
+    };
 
     const toggleCategoryPicker = () => {
         setIsCategoryPickerVisible(!isCategoryPickerVisible);
@@ -141,8 +141,12 @@ const BrowseHousekeepersScreen = ({ navigation }: { navigation: any }) => {
                     </View>
 
                     <View style={styles.tagsContainer}>
-                        <Text style={styles.chipText}>{item.category.replace('_', ' ')}</Text>
-                        <Text style={styles.chipText}>{item.employment_type.replace('_', ' ')}</Text>
+                        <Text style={styles.chipText}>
+                            {item.category ? item.category.replace('_', ' ') : 'N/A'}
+                        </Text>
+                        <Text style={styles.chipText}>
+                            {item.employment_type ? item.employment_type.replace('_', ' ') : 'N/A'}
+                        </Text>
                     </View>
                 </Card.Content>
             </Card>
@@ -441,6 +445,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         fontSize: 16,color: '#4A6572',
       },
-  });
-  
-  export default BrowseHousekeepersScreen;
+});
+
+export default BrowseHousekeepersScreen;
+
