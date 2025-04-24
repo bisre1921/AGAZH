@@ -55,9 +55,10 @@ const RegisterHouseKeeperScreen = ({ navigation }: { navigation: any }) => {
     const handleRegister = async (values: any) => {
         try {
             setIsLoading(true);
-            const { confirmPassword, phoneNumber, employmentType, ...userData } = values;
+            const { confirmPassword, phoneNumber, employmentType, placeOfBirth, ...userData } = values;
             userData.phone_number = phoneNumber;
             userData.employment_type = employmentType;
+            userData.place_of_birth = placeOfBirth;
             userData.age = parseInt(userData.age, 10);
             userData.experience = parseInt(userData.experience, 10);
 
