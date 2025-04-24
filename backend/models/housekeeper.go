@@ -40,3 +40,18 @@ type Housekeeper struct {
 	CreatedAt      time.Time          `json:"created_at,omitempty" bson:"created_at,omitempty"`
 	UpdatedAt      time.Time          `json:"updated_at,omitempty" bson:"updated_at,omitempty"`
 }
+
+type HousekeeperUpdate struct {
+	Name           string         `json:"name,omitempty" bson:"name,omitempty"`
+	Age            int            `json:"age,omitempty" bson:"age,omitempty"`
+	Experience     int            `json:"experience,omitempty" bson:"experience,omitempty"`
+	Category       Category       `json:"category,omitempty" bson:"category,omitempty"`
+	EmploymentType EmploymentType `json:"employment_type,omitempty" bson:"employment_type,omitempty"`
+	Skills         []string       `json:"skills,omitempty" bson:"skills,omitempty"`
+	PhotoURL       string         `json:"photo_url,omitempty" bson:"photo_url,omitempty"`
+	Certifications []string       `json:"certifications,omitempty" bson:"certifications,omitempty"`
+	Location       string         `json:"location,omitempty" bson:"location,omitempty"`
+	PhoneNumber    string         `json:"phone_number,omitempty" bson:"phone_number,omitempty"`
+	Religion       string         `json:"religion,omitempty" bson:"religion,omitempty"`
+	PlaceOfBirth   string         `json:"place_of_birth,omitempty" bson:"place_of_birth,omitempty"`
+}

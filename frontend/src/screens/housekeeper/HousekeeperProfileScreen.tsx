@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useAuth } from '../../contexts/AuthContext';
-import api, { getHousekeeper } from '../../api/api';
+import api, { getHousekeeper, updateHousekeeper } from '../../api/api'; 
 
 interface HousekeeperProfile {
     name: string;
@@ -20,6 +20,24 @@ interface HousekeeperProfile {
     skills: string[];
     certifications: string[];
     created_at: string;
+}
+
+interface HousekeeperData {
+  name: string;
+  email: string;
+  password: string;
+  age: number;
+  experience?: number;
+  category: string; 
+  employmentType: string; 
+  skills?: string[];
+  photoURL?: string;
+  certifications?: string[];
+  location: string;
+  phoneNumber: string;
+  rating?: number;
+  reviews?: string[]; 
+  isAvailable?: boolean;
 }
 
 const HousekeeperProfileScreen = () => {
@@ -49,18 +67,18 @@ const HousekeeperProfileScreen = () => {
   
   // Dropdown state
   const [categoryOpen, setCategoryOpen] = useState(false);
-  const [categoryValue, setCategoryValue] = useState(null);
+  const [categoryValue, setCategoryValue] = useState<string | null>(null); // Changed to string | null
   const [categories] = useState([
     { label: 'Normal', value: 'NORMAL' },
-    { label: 'Child Taker', value: 'CHILD_TAKER' },
-    { label: 'Cleaner', value: 'CLEANER' },
+    { label: 'Child Care', value: 'CHILD_CARE' },
+    { label: 'Cleaner', value: 'CLEANING' },
   ]);
 
   const [typeOpen, setTypeOpen] = useState(false);
-  const [typeValue, setTypeValue] = useState(null);
+  const [typeValue, setTypeValue] = useState<string | null>(null);    // Changed to string | null
   const [types] = useState([
-    { label: 'Temporary', value: 'TEMPORARY' },
-    { label: 'Permanent', value: 'PERMANENT' },
+    { label: 'LIVE_OUT', value: 'LIVE_OUT' },
+    { label: 'LIVE_IN', value: 'LIVE_IN' },
   ]);
 
   // Skills and certifications management
@@ -157,33 +175,36 @@ const HousekeeperProfileScreen = () => {
     });
   };
 
-  const handleUpdateProfile = async () => {
-    try {
-      setLoading(true);
-      
-      await api.put(`/housekeepers/${userInfo.user_id}`, {
-        name: formData.name,
-        age: parseInt(formData.age),
-        experience: parseInt(formData.experience),
-        category: categoryValue,
-        employment_type: typeValue,
-        location: formData.location,
-        phone_number: formData.phoneNumber,
-        skills: formData.skills,
-        certifications: formData.certifications,
-        photo_url: formData.photoURL,
-      });
-      
-      setEditing(false);
-      fetchProfile();
-      Alert.alert('Success', 'Profile updated successfully');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      Alert.alert('Error', 'Failed to update profile');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const handleUpdateProfile = async () => {
+        try {
+            setLoading(true);
+
+            const processedData: Partial<HousekeeperData> = {
+                name: formData.name,
+                age: parseInt(formData.age),
+                experience: parseInt(formData.experience),
+                category: categoryValue || undefined,
+                employmentType: typeValue || undefined, // Corrected property name to employment_type
+                location: formData.location,
+                phoneNumber: formData.phoneNumber,
+                skills: formData.skills,
+                certifications: formData.certifications,
+                photoURL: formData.photoURL,
+            };
+            console.log('Processed data:', processedData);
+            const response = await updateHousekeeper(userInfo.user_id, processedData);
+            console.log('Update response:', response);
+
+            setEditing(false);
+            fetchProfile();
+            Alert.alert('Success', 'Profile updated successfully');
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            Alert.alert('Error', 'Failed to update profile');
+        } finally {
+            setLoading(false);
+        }
+    };
 
   if (loading && !profile) {
     return (
@@ -469,6 +490,7 @@ const HousekeeperProfileScreen = () => {
     </SafeAreaView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

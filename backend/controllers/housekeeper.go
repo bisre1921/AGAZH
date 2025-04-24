@@ -92,7 +92,7 @@ func GetHousekeeper(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "Housekeeper ID"
-// @Param updates body models.Housekeeper true "Updated housekeeper data"
+// @Param updates body models.HousekeeperUpdate true "Updated housekeeper data"
 // @Success 200 {object} models.GenericResponse
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 404 {object} models.ErrorResponse
@@ -105,15 +105,33 @@ func UpdateHousekeeper(c *gin.Context) {
 		return
 	}
 
-	var updates models.Housekeeper
+	var updates models.HousekeeperUpdate // Use HousekeeperUpdate
 	if err := c.ShouldBindJSON(&updates); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "name", Value: updates.Name},
+			{Key: "age", Value: updates.Age},
+			{Key: "experience", Value: updates.Experience},
+			{Key: "category", Value: updates.Category},
+			{Key: "employment_type", Value: updates.EmploymentType},
+			{Key: "location", Value: updates.Location},
+			{Key: "phone_number", Value: updates.PhoneNumber},
+			{Key: "skills", Value: updates.Skills},
+			{Key: "photo_url", Value: updates.PhotoURL},
+			{Key: "certifications", Value: updates.Certifications},
+			{Key: "religion", Value: updates.Religion},
+			{Key: "place_of_birth", Value: updates.PlaceOfBirth},
+		}},
 	}
 
 	result, err := config.DB.Collection("housekeepers").UpdateOne(
 		context.Background(),
 		bson.M{"_id": id},
-		bson.M{"$set": updates},
+		update,
 	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while updating housekeeper"})
