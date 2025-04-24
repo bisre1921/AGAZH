@@ -16,6 +16,8 @@ interface HousekeeperProfile {
     employment_type: string;
     location: string;
     age: number;
+    religion: string;
+    place_of_birth: string;
     experience: number;
     skills: string[];
     certifications: string[];
@@ -27,6 +29,8 @@ interface HousekeeperData {
   email: string;
   password: string;
   age: number;
+  religion: string;
+  placeOfBirth: string;
   experience?: number;
   category: string; 
   employmentType: string; 
@@ -48,6 +52,8 @@ const HousekeeperProfileScreen = () => {
   const [formData, setFormData] = useState<{
     name: string;
     age: string;
+    religion: string;
+    placeOfBirth: string;
     experience: string;
     location: string;
     phoneNumber: string;
@@ -57,6 +63,8 @@ const HousekeeperProfileScreen = () => {
   }>({
     name: '',
     age: '',
+    religion: '',
+    placeOfBirth: '',
     experience: '',
     location: '',
     phoneNumber: '',
@@ -94,6 +102,8 @@ const HousekeeperProfileScreen = () => {
       setFormData({
         name: response.data.name,
         age: response.data.age.toString(),
+        religion: response.data.religion,
+        placeOfBirth: response.data.place_of_birth,
         experience: response.data.experience.toString(),
         location: response.data.location,
         phoneNumber: response.data.phone_number,
@@ -182,6 +192,8 @@ const HousekeeperProfileScreen = () => {
             const processedData: Partial<HousekeeperData> = {
                 name: formData.name,
                 age: parseInt(formData.age),
+                religion: formData.religion,
+                placeOfBirth: formData.placeOfBirth,
                 experience: parseInt(formData.experience),
                 category: categoryValue || undefined,
                 employmentType: typeValue || undefined, // Corrected property name to employment_type
@@ -262,6 +274,20 @@ const HousekeeperProfileScreen = () => {
                   onChangeText={(text) => setFormData({ ...formData, age: text })}
                   style={styles.input}
                   keyboardType="numeric"
+                />
+
+                <TextInput
+                  label="Religion"
+                  value={formData.religion}
+                  onChangeText={(text) => setFormData({ ...formData, religion: text })}
+                  style={styles.input}
+                />
+
+                <TextInput
+                  label="Place of Birth"
+                  value={formData.placeOfBirth}
+                  onChangeText={(text) => setFormData({ ...formData, placeOfBirth: text })}
+                  style={styles.input}
                 />
                 
                 <TextInput
@@ -407,6 +433,22 @@ const HousekeeperProfileScreen = () => {
                     <View style={styles.infoTextContainer}>
                       <Text style={styles.infoLabel}>Age</Text>
                       <Text style={styles.infoValue}>{profile?.age} years</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.infoRow}>
+                    <Ionicons name="information-circle-outline" size={20} color="#4A6572" />
+                    <View style={styles.infoTextContainer}>
+                      <Text style={styles.infoLabel}>Religion</Text>
+                      <Text style={styles.infoValue}>{profile?.religion}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.infoRow}>
+                    <Ionicons name="earth-outline" size={20} color="#4A6572" />
+                    <View style={styles.infoTextContainer}>
+                      <Text style={styles.infoLabel}>Place of Birth</Text>
+                      <Text style={styles.infoValue}>{profile?.place_of_birth}</Text>
                     </View>
                   </View>
                   
