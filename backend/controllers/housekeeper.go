@@ -4,11 +4,13 @@ import (
 	"backend/config"
 	"backend/models"
 	"context"
+	"log" // Import the log package
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -78,7 +80,11 @@ func GetHousekeeper(c *gin.Context) {
 	var housekeeper models.Housekeeper
 	err = config.DB.Collection("housekeepers").FindOne(context.Background(), bson.M{"_id": id}).Decode(&housekeeper)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Housekeeper not found"})
+		if err == mongo.ErrNoDocuments {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Housekeeper not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching housekeeper"})
+		}
 		return
 	}
 
@@ -111,29 +117,58 @@ func UpdateHousekeeper(c *gin.Context) {
 		return
 	}
 
-	update := bson.D{
-		{Key: "$set", Value: bson.D{
-			{Key: "name", Value: updates.Name},
-			{Key: "age", Value: updates.Age},
-			{Key: "experience", Value: updates.Experience},
-			{Key: "category", Value: updates.Category},
-			{Key: "employment_type", Value: updates.EmploymentType},
-			{Key: "location", Value: updates.Location},
-			{Key: "phone_number", Value: updates.PhoneNumber},
-			{Key: "skills", Value: updates.Skills},
-			{Key: "photo_url", Value: updates.PhotoURL},
-			{Key: "certifications", Value: updates.Certifications},
-			{Key: "religion", Value: updates.Religion},
-			{Key: "place_of_birth", Value: updates.PlaceOfBirth},
-		}},
+	// Construct the update document.  Only include fields that are present
+	updateDoc := bson.D{}
+	setDoc := bson.D{}
+
+	if updates.Name != "" {
+		setDoc = append(setDoc, bson.E{Key: "name", Value: updates.Name})
+	}
+	if updates.Age != 0 {
+		setDoc = append(setDoc, bson.E{Key: "age", Value: updates.Age})
+	}
+	if updates.Experience != 0 {
+		setDoc = append(setDoc, bson.E{Key: "experience", Value: updates.Experience})
+	}
+	if updates.Category != "" {
+		setDoc = append(setDoc, bson.E{Key: "category", Value: updates.Category})
+	}
+	if updates.EmploymentType != "" {
+		setDoc = append(setDoc, bson.E{Key: "employment_type", Value: updates.EmploymentType})
+	}
+	if updates.Location != "" {
+		setDoc = append(setDoc, bson.E{Key: "location", Value: updates.Location})
+	}
+	if updates.PhoneNumber != "" {
+		setDoc = append(setDoc, bson.E{Key: "phone_number", Value: updates.PhoneNumber})
+	}
+	if updates.Skills != nil {
+		setDoc = append(setDoc, bson.E{Key: "skills", Value: updates.Skills})
+	}
+	if updates.PhotoURL != "" {
+		setDoc = append(setDoc, bson.E{Key: "photo_url", Value: updates.PhotoURL})
+	}
+	if updates.Certifications != nil {
+		setDoc = append(setDoc, bson.E{Key: "certifications", Value: updates.Certifications})
+	}
+	if updates.Religion != "" {
+		setDoc = append(setDoc, bson.E{Key: "religion", Value: updates.Religion})
+	}
+	if updates.PlaceOfBirth != "" {
+		setDoc = append(setDoc, bson.E{Key: "place_of_birth", Value: updates.PlaceOfBirth})
+	}
+
+	if len(setDoc) > 0 {
+		updateDoc = append(updateDoc, bson.E{Key: "$set", Value: setDoc})
 	}
 
 	result, err := config.DB.Collection("housekeepers").UpdateOne(
 		context.Background(),
 		bson.M{"_id": id},
-		update,
+		updateDoc,
 	)
 	if err != nil {
+		log.Printf("Error updating housekeeper: %v", err) // Log the error
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while updating housekeeper"})
 		return
 	}
