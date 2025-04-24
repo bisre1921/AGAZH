@@ -54,12 +54,6 @@ const EmployerProfileScreen = () => {
   const handleUpdateProfile = async () => {
     try {
       setLoading(true);
-      // await api.put(`/employer/${userInfo.user_id}`, {
-      //   name: formData.name,
-      //   address: formData.address,
-      //   phone_number: formData.phoneNumber,
-      //   family_size: parseInt(formData.familySize) || 0,
-      // });
       let processedData = {
         name: formData.name,
         address: formData.address,
