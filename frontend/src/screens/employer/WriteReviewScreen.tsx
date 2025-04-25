@@ -6,10 +6,8 @@ import { Rating } from 'react-native-ratings';
 import { createReview } from '../../api/api';
 import { useAuth } from '../../contexts/AuthContext';
 
-const WriteReviewScreen = ({ route, navigation }: {route: any, navigation: any}) => {
+const WriteReviewScreen = ({ route, navigation }: { route: any; navigation: any }) => {
   const { housekeeperId, housekeeperName } = route.params;
-//   const housekeeperId = route?.params?.housekeeperId ?? '';
-//   const housekeeperName = route?.params?.housekeeperName ?? 'Unknown';
   const { userInfo } = useAuth();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -20,47 +18,45 @@ const WriteReviewScreen = ({ route, navigation }: {route: any, navigation: any})
       Alert.alert('Error', 'Please select a rating');
       return;
     }
-
+  
     try {
       setLoading(true);
-      
+  
       const reviewData = {
-        employerID: userInfo.user_id,
-        housekeeperID: housekeeperId,
+        employer_id: userInfo.user_id,
+        housekeeper_id: housekeeperId,
         rating: rating,
         comment: comment,
       };
-      
-      await createReview(reviewData);
-      
+  
+      const response = await createReview(reviewData);
+      console.log('Review submitted successfully:', response);
+  
       navigation.goBack();
-      Alert.alert(
-        'Review Submitted',
-        'Thank you for your feedback!',
-        [
-          {
-            text: 'OK',
-            onPress: () => navigation.goBack(),
-          },
-        ]
-      );
+      Alert.alert('Review Submitted', 'Thank you for your feedback!', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
     } catch (error: any) {
       console.error('Review submission error:', error);
       Alert.alert(
         'Submission Failed',
         error?.response?.data?.error || error?.message || 'Failed to submit review. Please try again.'
-      );      
+      );
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.title}>Write a Review</Text>
         <Text style={styles.subtitle}>for {housekeeperName}</Text>
-        
+
         <View style={styles.ratingContainer}>
           <Text style={styles.ratingLabel}>How would you rate your experience?</Text>
           <Rating
@@ -70,7 +66,7 @@ const WriteReviewScreen = ({ route, navigation }: {route: any, navigation: any})
             imageSize={40}
           />
         </View>
-        
+
         <TextInput
           label="Your Review (Optional)"
           value={comment}
@@ -80,7 +76,7 @@ const WriteReviewScreen = ({ route, navigation }: {route: any, navigation: any})
           numberOfLines={6}
           placeholder="Share your experience with this housekeeper..."
         />
-        
+
         <Button
           mode="contained"
           onPress={handleSubmitReview}
